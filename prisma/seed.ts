@@ -98,7 +98,7 @@ async function main() {
       need: 'Looking for 3BHK duplex villa with east-facing garden for family of 4.',
       authority: 'Decision maker with self-funded capital',
       summary: 'Spoke for 4 mins on Voice AI. Loved the Garden Villa pricing. Booked Saturday morning site visit with complimentary cab pickup.',
-      recordingUrl: 'https://cdn.talkar.in/recordings/demo-prestige-vikram.mp3',
+      recordingUrl: null,
       callRunId: 'WR-89102',
       appointments: {
         create: {
@@ -205,7 +205,7 @@ async function main() {
       timeline: 'Immediate (Severe toothache)',
       need: 'Lower right molar replacement with single dental implant.',
       summary: 'Patient experiencing discomfort in lower molar. AI agent assured 10-year warranty and scheduled urgent OPD consultation for Saturday 3:00 PM.',
-      recordingUrl: 'https://cdn.talkar.in/recordings/demo-clove-neha.mp3',
+      recordingUrl: null,
       callRunId: 'WR-89105',
       appointments: {
         create: {
@@ -295,7 +295,7 @@ async function main() {
       need: 'Replacing legacy desktop fee software with cloud-based ERP and parent mobile app for 1,400 students.',
       authority: 'School Principal & Trustee',
       summary: 'Spoke with Talkar Voice AI. Highly receptive to automated fee reminders. Booked 15-min screen demo for tomorrow 11:00 AM.',
-      recordingUrl: 'https://cdn.talkar.in/recordings/demo-gurug-anand.mp3',
+      recordingUrl: null,
       callRunId: 'WR-89109',
       appointments: {
         create: {

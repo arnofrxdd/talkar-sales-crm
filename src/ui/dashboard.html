@@ -1071,11 +1071,15 @@
 
       const audioSec = document.getElementById('modalAudioSection');
       const audioPlayer = document.getElementById('modalAudioPlayer');
-      if (lead.recordingUrl) {
+      if (lead.recordingUrl && !lead.recordingUrl.includes('cdn.talkar.in')) {
         audioSec.classList.remove('hidden');
         audioPlayer.src = lead.recordingUrl;
+        audioPlayer.onerror = () => {
+          audioSec.classList.add('hidden');
+        };
       } else {
         audioSec.classList.add('hidden');
+        audioPlayer.removeAttribute('src');
       }
 
       const aptSec = document.getElementById('modalAppointmentSection');
