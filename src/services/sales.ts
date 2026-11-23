@@ -305,12 +305,21 @@ export class SalesService {
     });
 
     if (lead) {
+      // Don't demote a lead who already booked an appointment or closed
+      const hasAppointments = await prisma.appointment.count({
+        where: { leadId: lead.id, status: 'SCHEDULED' },
+      });
+      const isAlreadyBooked =
+        lead.stage === 'APPOINTMENT_BOOKED' || hasAppointments > 0 || lead.stage === 'CLOSED_WON';
+      const targetStage = isAlreadyBooked ? lead.stage : 'QUALIFIED';
+      const targetTemp = isAlreadyBooked || lead.temperature === 'HOT' ? 'HOT' : 'WARM';
+
       lead = await prisma.lead.update({
         where: { id: lead.id },
         data: {
           name: input.leadName || lead.name,
-          temperature: 'WARM',
-          stage: 'QUALIFIED',
+          temperature: targetTemp,
+          stage: targetStage,
           callbackAt: callbackDate,
           callbackReason: input.reason || 'Requested callback during call',
         },
@@ -440,29 +449,21 @@ export class SalesService {
     const cleanPhone = sanitizePhone(rawPhone);
     const leadName = extracted.lead_name || extracted.name || 'Voice Prospect';
 
-    let temperature = 'WARM';
-    const quality = String(extracted.lead_quality || extracted.lead_temperature || '').toUpperCase();
-    if (quality === 'COLD' || quality === 'NOT_INTERESTED' || extracted.not_interested) {
-      temperature = 'COLD';
-    } else if (extracted.appointment_booked || extracted.booked || quality === 'HOT') {
-      temperature = 'HOT';
-    }
-
-    let stage = 'QUALIFIED';
-    if (extracted.appointment_booked) stage = 'APPOINTMENT_BOOKED';
-    else if (temperature === 'COLD') stage = 'LOST';
-
     // 1. First attempt to match lead by exact lead_id if passed in context or body
     const targetLeadId = body.lead_id || body.initial_context?.lead_id || extracted.lead_id;
     let lead = null;
     if (targetLeadId) {
-      lead = await prisma.lead.findUnique({ where: { id: targetLeadId } });
+      lead = await prisma.lead.findUnique({
+        where: { id: targetLeadId },
+        include: { appointments: true },
+      });
     }
 
     // 2. Second attempt: match by phone within the same company
     if (!lead && cleanPhone) {
       lead = await prisma.lead.findFirst({
         where: { companyId: company.id, phone: cleanPhone },
+        include: { appointments: true },
       });
     }
 
@@ -470,6 +471,7 @@ export class SalesService {
     if (!lead && leadName && leadName !== 'Voice Prospect') {
       lead = await prisma.lead.findFirst({
         where: { companyId: company.id, name: leadName },
+        include: { appointments: true },
         orderBy: { updatedAt: 'desc' },
       });
     }
@@ -478,6 +480,28 @@ export class SalesService {
     if (!lead && !cleanPhone) {
       console.warn('⚠️ [Webhook Warning] Cannot associate or create lead without phone or ID. Skipping creation.');
       return { success: false, error: 'Cannot create lead without valid phone or ID' };
+    }
+
+    const hasActiveAppointments = lead?.appointments && lead.appointments.some((a: any) => a.status === 'SCHEDULED');
+    const isAppointmentAction =
+      extracted.appointment_booked ||
+      extracted.booked ||
+      (extracted.appointment_ref && String(extracted.appointment_ref).toLowerCase() !== 'none') ||
+      extracted.action_taken === 'site_visit_booked';
+
+    let temperature = 'WARM';
+    const quality = String(extracted.lead_quality || extracted.lead_temperature || '').toUpperCase();
+    if (quality === 'COLD' || quality === 'NOT_INTERESTED' || extracted.not_interested) {
+      temperature = 'COLD';
+    } else if (isAppointmentAction || hasActiveAppointments || quality === 'HOT' || lead?.temperature === 'HOT') {
+      temperature = 'HOT';
+    }
+
+    let stage = 'QUALIFIED';
+    if (temperature === 'COLD') {
+      stage = 'LOST';
+    } else if (isAppointmentAction || hasActiveAppointments || lead?.stage === 'APPOINTMENT_BOOKED' || lead?.stage === 'CLOSED_WON') {
+      stage = lead?.stage === 'CLOSED_WON' ? 'CLOSED_WON' : 'APPOINTMENT_BOOKED';
     }
 
     const updateData = {
