@@ -4,6 +4,8 @@ A multi-tenant, industry-agnostic Sales CRM, BANT Lead Qualification Engine, and
 
 Served locally on **Port `7576`** and configured for production at **`https://salescrm.talkar.in`**.
 
+> 📖 **Comprehensive Reference:** For complete REST API specs, Voice Agent Tools, Meta WhatsApp Templates, n8n Gateways, and the Multi-Industry Replication Playbook, see [API & System Reference Manual](docs/API_DOCUMENTATION.md).
+
 ---
 
 ## 1. System Philosophy: The Chameleon Architecture
