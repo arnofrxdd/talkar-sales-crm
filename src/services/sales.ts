@@ -569,6 +569,8 @@ export class SalesService {
             name: lead.name,
             budget: lead.budget || '',
             need: lead.need || lead.notes || '',
+            callback_reason: lead.callbackReason || '',
+            is_followup: Boolean(lead.callbackAt || lead.callbackReason),
           },
         },
       },

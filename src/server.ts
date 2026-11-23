@@ -11,6 +11,7 @@ import { leadsRouter } from './api/leads.js';
 import { appointmentsRouter, handleScheduleCallback } from './api/appointments.js';
 import { webhooksRouter } from './api/webhooks.js';
 import { eventService } from './services/events.js';
+import { callbackScheduler } from './services/scheduler.js';
 
 dotenv.config();
 
@@ -106,4 +107,7 @@ app.listen(PORT, HOST, () => {
   console.log(`📞 Post-Call Hook:  http://localhost:${PORT}/api/webhooks/call-completed`);
   console.log(`🤖 MCP Server:      npm run mcp`);
   console.log(`💼 ========================================================\n`);
+
+  // Start autonomous scheduled callback worker (polls every 30 seconds)
+  callbackScheduler.start(30000);
 });
