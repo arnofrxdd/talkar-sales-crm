@@ -309,8 +309,9 @@ export class SalesService {
       const hasAppointments = await prisma.appointment.count({
         where: { leadId: lead.id, status: 'SCHEDULED' },
       });
+      const isWon = lead.stage === 'WON' || lead.stage === 'CLOSED_WON';
       const isAlreadyBooked =
-        lead.stage === 'APPOINTMENT_BOOKED' || hasAppointments > 0 || lead.stage === 'CLOSED_WON';
+        lead.stage === 'APPOINTMENT_BOOKED' || hasAppointments > 0 || isWon;
       const targetStage = isAlreadyBooked ? lead.stage : 'QUALIFIED';
       const targetTemp = isAlreadyBooked || lead.temperature === 'HOT' ? 'HOT' : 'WARM';
 
@@ -498,10 +499,11 @@ export class SalesService {
     }
 
     let stage = 'QUALIFIED';
+    const isWon = lead?.stage === 'WON' || lead?.stage === 'CLOSED_WON';
     if (temperature === 'COLD') {
       stage = 'LOST';
-    } else if (isAppointmentAction || hasActiveAppointments || lead?.stage === 'APPOINTMENT_BOOKED' || lead?.stage === 'CLOSED_WON') {
-      stage = lead?.stage === 'CLOSED_WON' ? 'CLOSED_WON' : 'APPOINTMENT_BOOKED';
+    } else if (isAppointmentAction || hasActiveAppointments || lead?.stage === 'APPOINTMENT_BOOKED' || isWon) {
+      stage = isWon ? lead!.stage : 'APPOINTMENT_BOOKED';
     }
 
     const updateData = {
