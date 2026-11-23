@@ -452,12 +452,36 @@ export class SalesService {
     if (extracted.appointment_booked) stage = 'APPOINTMENT_BOOKED';
     else if (temperature === 'COLD') stage = 'LOST';
 
-    let lead = await prisma.lead.findFirst({
-      where: { companyId: company.id, phone: cleanPhone },
-    });
+    // 1. First attempt to match lead by exact lead_id if passed in context or body
+    const targetLeadId = body.lead_id || body.initial_context?.lead_id || extracted.lead_id;
+    let lead = null;
+    if (targetLeadId) {
+      lead = await prisma.lead.findUnique({ where: { id: targetLeadId } });
+    }
+
+    // 2. Second attempt: match by phone within the same company
+    if (!lead && cleanPhone) {
+      lead = await prisma.lead.findFirst({
+        where: { companyId: company.id, phone: cleanPhone },
+      });
+    }
+
+    // 3. Third attempt: match by exact lead name within the same company if phone is missing
+    if (!lead && leadName && leadName !== 'Voice Prospect') {
+      lead = await prisma.lead.findFirst({
+        where: { companyId: company.id, name: leadName },
+        orderBy: { updatedAt: 'desc' },
+      });
+    }
+
+    // Guard: Never create a new phantom lead if there is neither a valid phone number nor a recognized lead ID
+    if (!lead && !cleanPhone) {
+      console.warn('⚠️ [Webhook Warning] Cannot associate or create lead without phone or ID. Skipping creation.');
+      return { success: false, error: 'Cannot create lead without valid phone or ID' };
+    }
 
     const updateData = {
-      name: leadName,
+      name: lead ? lead.name : leadName,
       temperature,
       stage,
       budget: extracted.budget_range || extracted.budget || undefined,
@@ -568,8 +592,12 @@ export class SalesService {
           phone_number: cleanPhone,
           from_phone_number_id: fromPhoneNumberId,
           initial_context: {
+            lead_id: lead.id,
             customer_name: lead.name,
             name: lead.name,
+            phone: cleanPhone,
+            lead_phone: cleanPhone,
+            company_slug: companySlug,
             budget: lead.budget || '',
             need: lead.need || lead.notes || '',
             callback_reason: lead.callbackReason || '',
