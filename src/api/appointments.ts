@@ -81,11 +81,14 @@ appointmentsRouter.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/companies/:slug/callbacks - Schedule callback
-appointmentsRouter.post('/callbacks', async (req: Request, res: Response) => {
+// POST /api/companies/:slug/callbacks - Schedule callback handler
+export async function handleScheduleCallback(req: Request, res: Response) {
   try {
     const { slug } = req.params;
-    const { lead_phone, lead_name, callback_time, reason } = req.body;
+    const lead_phone = req.body.lead_phone || req.body.phone;
+    const lead_name = req.body.lead_name || req.body.name;
+    const callback_time = req.body.callback_time || req.body.time || req.body.slot_time;
+    const reason = req.body.reason || req.body.notes || 'Requested callback during call';
 
     if (!lead_phone || !callback_time) {
       return res.status(400).json({
@@ -105,4 +108,6 @@ appointmentsRouter.post('/callbacks', async (req: Request, res: Response) => {
   } catch (err: any) {
     res.status(400).json({ success: false, error: err.message });
   }
-});
+}
+
+appointmentsRouter.post('/callbacks', handleScheduleCallback);

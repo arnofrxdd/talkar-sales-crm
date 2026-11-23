@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 import { companiesRouter } from './api/companies.js';
 import { offeringsRouter } from './api/offerings.js';
 import { leadsRouter } from './api/leads.js';
-import { appointmentsRouter } from './api/appointments.js';
+import { appointmentsRouter, handleScheduleCallback } from './api/appointments.js';
 import { webhooksRouter } from './api/webhooks.js';
 import { eventService } from './services/events.js';
 
@@ -88,6 +88,7 @@ app.get('/api/events/leads', (req: Request, res: Response) => {
 // 4. API Endpoints
 app.use('/api/companies/:slug/offerings', offeringsRouter);
 app.use('/api/companies/:slug/leads', leadsRouter);
+app.post('/api/companies/:slug/callbacks', handleScheduleCallback);
 app.use('/api/companies/:slug/appointments', appointmentsRouter);
 app.use('/api/companies', companiesRouter);
 app.use('/api/webhooks', webhooksRouter);
