@@ -142,7 +142,7 @@
 
       <button onclick="switchView('appointments')" id="nav-appointments" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all text-left">
         <i data-lucide="calendar" class="w-4 h-4"></i>
-        <span id="navAppointmentsLabel">Scheduled Visits</span>
+        <span id="navAppointmentsLabel">Appointments</span>
       </button>
 
       <button onclick="switchView('campaigns')" id="nav-campaigns" class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all text-left">
@@ -717,9 +717,10 @@
         document.getElementById('industryBadge').textContent = currentCompany.industry.replace('_', ' ');
         document.getElementById('offeringNounBadge').textContent = currentCompany.offeringNoun;
         document.getElementById('appointmentNounBadge').textContent = currentCompany.appointmentNoun;
-        document.getElementById('colHeaderAppointment').textContent = `${currentCompany.appointmentNoun}s Booked`;
-        document.getElementById('navCatalogLabel').textContent = `${currentCompany.offeringNoun}s`;
-        document.getElementById('navAppointmentsLabel').textContent = `${currentCompany.appointmentNoun}s`;
+        document.getElementById('colHeaderAppointment').textContent = `${currentCompany.appointmentNoun}s Booked`.length > 22 ? 'Booked' : `${currentCompany.appointmentNoun}s Booked`;
+        // Keep sidebar menu labels concise and standard so they never wrap onto multiple lines
+        document.getElementById('navCatalogLabel').textContent = 'Catalog & Pricing';
+        document.getElementById('navAppointmentsLabel').textContent = 'Appointments';
 
         await loadLeads(slug);
         await loadOfferings(slug);
