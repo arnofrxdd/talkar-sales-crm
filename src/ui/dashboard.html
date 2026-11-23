@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talkar Sales CRM — Universal Autonomous Voice AI Hub</title>
+  <title>Talkar CRM — Sales Pipeline & Operations</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,11 +20,13 @@
           },
           colors: {
             brand: {
-              50: '#F0FDF4',
-              100: '#DCFCE7',
-              500: '#22C55E',
-              600: '#16A34A',
-              700: '#15803D',
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
+              800: '#3730A3',
+              900: '#312E81',
             }
           }
         }
@@ -33,8 +35,8 @@
   </script>
   <style>
     body {
-      background-color: #0B0F19;
-      color: #F1F5F9;
+      background-color: #F8FAFC;
+      color: #0F172A;
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       -webkit-font-smoothing: antialiased;
     }
@@ -43,125 +45,114 @@
       height: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.6);
+      background: #F1F5F9;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(51, 65, 85, 0.8);
+      background: #CBD5E1;
       border-radius: 9999px;
     }
-    .pulse-new {
-      animation: neonGlow 2.5s ease-out;
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
     }
-    @keyframes neonGlow {
-      0% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.8); border-color: #22C55E; }
-      100% { box-shadow: none; border-color: rgba(51, 65, 85, 0.6); }
+    .pulse-new {
+      animation: gentleHighlight 2s ease-out;
+    }
+    @keyframes gentleHighlight {
+      0% { background-color: #EEF2FF; border-color: #6366F1; }
+      100% { background-color: #FFFFFF; border-color: #E2E8F0; }
     }
   </style>
 </head>
-<body class="min-h-screen flex bg-[#0B0F19] font-sans text-xs text-slate-200 antialiased overflow-hidden">
+<body class="min-h-screen flex bg-[#F8FAFC] font-sans text-xs text-slate-800 antialiased overflow-hidden">
 
   <!-- ========================================================================= -->
-  <!-- SIDEBAR                                                                   -->
+  <!-- CLEAN INDUSTRIAL WHITE SIDEBAR                                            -->
   <!-- ========================================================================= -->
-  <aside class="w-64 bg-[#0F172A] border-r border-slate-800/80 flex flex-col shrink-0 min-h-screen sticky top-0 h-screen z-40 select-none">
+  <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 min-h-screen sticky top-0 h-screen z-40 select-none shadow-[1px_0_4px_rgba(0,0,0,0.02)]">
     
-    <!-- Brand Header -->
-    <div class="p-4 border-b border-slate-800">
+    <!-- Workspace Brand Header -->
+    <div class="p-4 border-b border-slate-100">
       <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-950/40">
-          <i data-lucide="phone-call" class="w-5 h-5"></i>
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-sm">
+          <i data-lucide="layers" class="w-4 h-4"></i>
         </div>
         <div>
-          <div class="flex items-center gap-1.5">
-            <h1 class="font-extrabold text-sm text-white tracking-tight leading-none">Talkar CRM</h1>
-            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Voice AI</span>
-          </div>
-          <span class="text-[11px] text-slate-400 font-normal">Universal Sales Pipeline</span>
+          <h1 class="font-bold text-sm text-slate-900 tracking-tight leading-none">Talkar CRM</h1>
+          <span class="text-[11px] text-slate-500 font-medium">Sales & Pipeline Hub</span>
         </div>
       </div>
 
-      <!-- Company Switcher -->
+      <!-- Account / Workspace Selector -->
       <div class="mt-4">
-        <div class="flex items-center justify-between mb-1.5">
-          <label class="text-[11px] font-semibold text-slate-400 tracking-wide uppercase">Active Account</label>
-          <button onclick="openNewCompanyModal()" class="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors">
-            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-            <span>New Client</span>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Workspace</label>
+          <button onclick="openNewCompanyModal()" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-0.5 transition-colors">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add Account</span>
           </button>
         </div>
         <div class="relative">
-          <select id="companySelect" onchange="switchCompany(this.value)" class="w-full bg-slate-900/90 hover:bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 cursor-pointer appearance-none pr-8 transition-colors">
+          <select id="companySelect" onchange="switchCompany(this.value)" class="w-full bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer appearance-none pr-7 transition-colors">
             <option value="" disabled>Loading accounts...</option>
           </select>
-          <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          <div class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
           </div>
         </div>
       </div>
 
-      <!-- Dynamic Chameleon Noun Card -->
-      <div id="industryMetaCard" class="mt-3.5 p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px]">
-        <div class="flex items-center gap-2 text-emerald-400 font-semibold mb-1">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-          <span id="industryBadge">Real Estate</span>
+      <!-- Industry Context Card -->
+      <div id="industryMetaCard" class="mt-3 p-2.5 rounded-lg bg-slate-50 border border-slate-200/80 text-[11px]">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-slate-500 font-medium">Industry</span>
+          <span id="industryBadge" class="font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded text-[10px] border border-indigo-100">Real Estate</span>
         </div>
-        <div class="text-slate-400 leading-snug">
-          <div><span class="text-slate-500">Products:</span> <span id="offeringNounBadge" class="text-slate-300 font-medium">Villas & Units</span></div>
-          <div><span class="text-slate-500">Bookings:</span> <span id="appointmentNounBadge" class="text-slate-300 font-medium">Site Visits</span></div>
+        <div class="space-y-0.5 text-slate-600">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Catalog:</span>
+            <span id="offeringNounBadge" class="font-medium text-slate-700">Villas & Units</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Bookings:</span>
+            <span id="appointmentNounBadge" class="font-medium text-slate-700">Site Visits</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Navigation Menu -->
     <nav class="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
-      <button onclick="switchView('kanban')" id="nav-kanban" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 transition-all text-left">
-        <i data-lucide="kanban" class="w-4 h-4"></i>
-        <span>Live Kanban Pipeline</span>
+      <button onclick="switchView('kanban')" id="nav-kanban" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 transition-all text-left">
+        <i data-lucide="trello" class="w-4 h-4"></i>
+        <span>Pipeline Board</span>
       </button>
 
-      <button onclick="switchView('catalog')" id="nav-catalog" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-        <i data-lucide="package" class="w-4 h-4"></i>
-        <span>Catalog & Offerings</span>
+      <button onclick="switchView('catalog')" id="nav-catalog" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all text-left">
+        <i data-lucide="tag" class="w-4 h-4"></i>
+        <span id="navCatalogLabel">Products & Pricing</span>
       </button>
 
-      <button onclick="switchView('appointments')" id="nav-appointments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-        <i data-lucide="calendar-check" class="w-4 h-4"></i>
-        <span>Booked Appointments</span>
+      <button onclick="switchView('appointments')" id="nav-appointments" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all text-left">
+        <i data-lucide="calendar" class="w-4 h-4"></i>
+        <span id="navAppointmentsLabel">Scheduled Appointments</span>
       </button>
 
-      <button onclick="switchView('campaigns')" id="nav-campaigns" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-        <i data-lucide="send" class="w-4 h-4"></i>
-        <span>Outbound Campaigns</span>
+      <button onclick="switchView('campaigns')" id="nav-campaigns" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all text-left">
+        <i data-lucide="mail-check" class="w-4 h-4"></i>
+        <span>Lead Campaigns</span>
       </button>
-
-      <div class="pt-4 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Architecture</div>
-      <div class="px-3 py-2 text-[11px] text-slate-400 space-y-1 bg-slate-900/40 rounded-xl border border-slate-800/50">
-        <div class="flex items-center justify-between">
-          <span class="text-slate-500">Port</span>
-          <span class="font-mono text-emerald-400">7576</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-slate-500">Domain</span>
-          <span class="font-mono text-slate-300">salescrm.talkar.in</span>
-        </div>
-        <div class="flex items-center justify-between">
-          <span class="text-slate-500">WhatsApp Engine</span>
-          <span class="text-purple-400 font-medium">n8n Webhook</span>
-        </div>
-      </div>
     </nav>
 
-    <!-- Footer Live SSE Stream Indicator -->
-    <div class="p-3 border-t border-slate-800 bg-slate-950/40">
-      <div class="flex items-center justify-between text-[11px]">
+    <!-- Footer Sync Indicator -->
+    <div class="p-3 border-t border-slate-100 bg-white">
+      <div class="flex items-center justify-between text-[11px] text-slate-500">
         <div class="flex items-center gap-2">
-          <div class="relative flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-          </div>
-          <span class="font-medium text-slate-300" id="sseStatusText">SSE Stream Live</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span class="font-medium text-slate-600" id="sseStatusText">Synced live</span>
         </div>
-        <span class="font-mono text-[10px] text-slate-500">0ms latency</span>
+        <button onclick="loadCompanyDetails(activeSlug)" class="text-slate-400 hover:text-slate-700" title="Refresh">
+          <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+        </button>
       </div>
     </div>
   </aside>
@@ -169,196 +160,212 @@
   <!-- ========================================================================= -->
   <!-- MAIN WORKSPACE                                                            -->
   <!-- ========================================================================= -->
-  <main class="flex-1 flex flex-col h-screen overflow-hidden">
+  <main class="flex-1 flex flex-col h-screen overflow-hidden bg-[#F8FAFC]">
     
-    <!-- Top Action & Metrics Bar -->
-    <header class="h-16 border-b border-slate-800/80 px-6 flex items-center justify-between bg-[#0F172A]/70 backdrop-blur shrink-0">
-      <div>
-        <div class="flex items-center gap-2">
-          <h2 id="pageTitle" class="text-base font-bold text-white tracking-tight">Live Sales Pipeline</h2>
-          <span id="activeCompanyBadge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">Prestige Group</span>
+    <!-- Top Bar with Search & Key Metrics -->
+    <header class="h-16 border-b border-slate-200/80 px-6 flex items-center justify-between bg-white shrink-0">
+      
+      <!-- Left: Workspace Name & Live Search -->
+      <div class="flex items-center gap-4">
+        <div>
+          <h2 id="activeCompanyName" class="text-sm font-bold text-slate-900 tracking-tight leading-none">Prestige Group</h2>
+          <span id="activeCompanySubtitle" class="text-[11px] text-slate-500 font-normal">Active Sales Pipeline</span>
         </div>
-        <p class="text-[11px] text-slate-400">Real-time AI voice call qualification, BANT scoring, and appointment booking.</p>
+
+        <div class="h-5 w-px bg-slate-200 mx-1"></div>
+
+        <!-- Search Input -->
+        <div class="relative w-64">
+          <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search prospects, phone, notes..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors">
+          <div class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+          </div>
+        </div>
+
+        <!-- Temperature Filter Dropdown -->
+        <select id="tempFilterSelect" onchange="handleTempFilter(this.value)" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer">
+          <option value="ALL">All Prospects</option>
+          <option value="HOT">🔥 Hot Only</option>
+          <option value="WARM">☀️ Warm Only</option>
+          <option value="COLD">❄️ Cold Only</option>
+        </select>
       </div>
 
+      <!-- Right: Metrics & Actions -->
       <div class="flex items-center gap-4">
-        <!-- Metric Cards -->
+        
+        <!-- Summary Counters -->
         <div class="flex items-center gap-3">
-          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-            <div class="w-7 h-7 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center">
-              <i data-lucide="flame" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Hot Leads</div>
-              <div id="statHot" class="font-bold text-sm text-white">0</div>
-            </div>
+          <div class="px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/80 text-right">
+            <div class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Hot Leads</div>
+            <div id="statHot" class="font-bold text-xs text-rose-600">0</div>
           </div>
 
-          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-            <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-              <i data-lucide="calendar" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Booked</div>
-              <div id="statBooked" class="font-bold text-sm text-white">0</div>
-            </div>
+          <div class="px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/80 text-right">
+            <div class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Appointments</div>
+            <div id="statBooked" class="font-bold text-xs text-emerald-600">0</div>
           </div>
 
-          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
-            <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
-              <i data-lucide="phone-forwarded" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Callbacks</div>
-              <div id="statCallbacks" class="font-bold text-sm text-white">0</div>
-            </div>
+          <div class="px-3 py-1 rounded-lg bg-slate-50 border border-slate-200/80 text-right">
+            <div class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Follow-ups</div>
+            <div id="statCallbacks" class="font-bold text-xs text-amber-600">0</div>
           </div>
         </div>
 
-        <button onclick="openNewLeadModal()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950/50">
-          <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span>Add Lead</span>
-        </button>
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+          <button onclick="exportPipelineCSV()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1.5 shadow-2xs transition-colors" title="Export pipeline to CSV">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Export</span>
+          </button>
+
+          <button onclick="openNewLeadModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold flex items-center gap-1.5 shadow-xs transition-colors">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+            <span>Add Lead</span>
+          </button>
+        </div>
       </div>
     </header>
 
     <!-- Content Workspace -->
-    <div class="flex-1 overflow-hidden p-6">
+    <div class="flex-1 overflow-hidden p-5">
       
-      <!-- VIEW 1: KANBAN BOARD -->
-      <div id="view-kanban" class="h-full flex gap-5 overflow-x-auto pb-4 custom-scrollbar">
+      <!-- ===================================================================== -->
+      <!-- VIEW 1: CLEAN WHITE KANBAN BOARD                                      -->
+      <!-- ===================================================================== -->
+      <div id="view-kanban" class="h-full flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
         
         <!-- Column 1: NEW INQUIRIES -->
-        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
-          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <div class="w-72 shrink-0 flex flex-col bg-slate-100/70 rounded-xl border border-slate-200/80 overflow-hidden">
+          <div class="px-3.5 py-2.5 border-b border-slate-200 bg-white/80 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-              <span class="font-bold text-xs uppercase tracking-wide text-slate-200">New Inquiries</span>
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span class="font-bold text-xs text-slate-800">New Inquiries</span>
             </div>
-            <span id="badge-count-NEW" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800 text-slate-300">0</span>
+            <span id="badge-count-NEW" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">0</span>
           </div>
-          <div id="col-NEW" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar">
-            <!-- Cards populated dynamically -->
-          </div>
+          <div id="col-NEW" class="flex-1 p-2.5 space-y-2.5 overflow-y-auto custom-scrollbar"></div>
         </div>
 
-        <!-- Column 2: QUALIFIED / CONTACTED -->
-        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
-          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <!-- Column 2: CONTACTED / QUALIFIED -->
+        <div class="w-72 shrink-0 flex flex-col bg-slate-100/70 rounded-xl border border-slate-200/80 overflow-hidden">
+          <div class="px-3.5 py-2.5 border-b border-slate-200 bg-white/80 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-              <span class="font-bold text-xs uppercase tracking-wide text-slate-200">AI Qualified / BANT</span>
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              <span class="font-bold text-xs text-slate-800">Contacted & Qualified</span>
             </div>
-            <span id="badge-count-QUALIFIED" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/10 text-blue-400">0</span>
+            <span id="badge-count-QUALIFIED" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">0</span>
           </div>
-          <div id="col-QUALIFIED" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+          <div id="col-QUALIFIED" class="flex-1 p-2.5 space-y-2.5 overflow-y-auto custom-scrollbar"></div>
         </div>
 
         <!-- Column 3: APPOINTMENT BOOKED -->
-        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-emerald-500/30 shadow-xl shadow-emerald-950/20 overflow-hidden">
-          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-emerald-950/30">
+        <div class="w-72 shrink-0 flex flex-col bg-emerald-50/40 rounded-xl border border-emerald-200/80 overflow-hidden">
+          <div class="px-3.5 py-2.5 border-b border-emerald-200/80 bg-white/80 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="colHeaderAppointment" class="font-bold text-xs uppercase tracking-wide text-emerald-300">Site Visit / Demo Booked</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span id="colHeaderAppointment" class="font-bold text-xs text-emerald-900">Appointments Booked</span>
             </div>
-            <span id="badge-count-APPOINTMENT_BOOKED" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-400">0</span>
+            <span id="badge-count-APPOINTMENT_BOOKED" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">0</span>
           </div>
-          <div id="col-APPOINTMENT_BOOKED" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+          <div id="col-APPOINTMENT_BOOKED" class="flex-1 p-2.5 space-y-2.5 overflow-y-auto custom-scrollbar"></div>
         </div>
 
-        <!-- Column 4: WON / CONVERTED -->
-        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
-          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <!-- Column 4: WON & CONVERTED -->
+        <div class="w-72 shrink-0 flex flex-col bg-slate-100/70 rounded-xl border border-slate-200/80 overflow-hidden">
+          <div class="px-3.5 py-2.5 border-b border-slate-200 bg-white/80 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span>
-              <span class="font-bold text-xs uppercase tracking-wide text-slate-200">Won & Closed</span>
+              <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+              <span class="font-bold text-xs text-slate-800">Closed / Won</span>
             </div>
-            <span id="badge-count-WON" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-500/10 text-teal-400">0</span>
+            <span id="badge-count-WON" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-100">0</span>
           </div>
-          <div id="col-WON" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+          <div id="col-WON" class="flex-1 p-2.5 space-y-2.5 overflow-y-auto custom-scrollbar"></div>
         </div>
 
-        <!-- Column 5: COLD / LOST -->
-        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
-          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <!-- Column 5: COLD / UNRESPONSIVE -->
+        <div class="w-72 shrink-0 flex flex-col bg-slate-100/70 rounded-xl border border-slate-200/80 overflow-hidden">
+          <div class="px-3.5 py-2.5 border-b border-slate-200 bg-white/80 flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
-              <span class="font-bold text-xs uppercase tracking-wide text-slate-400">Cold / Disqualified</span>
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span class="font-bold text-xs text-slate-600">Cold / Unresponsive</span>
             </div>
-            <span id="badge-count-LOST" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800 text-slate-400">0</span>
+            <span id="badge-count-LOST" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">0</span>
           </div>
-          <div id="col-LOST" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+          <div id="col-LOST" class="flex-1 p-2.5 space-y-2.5 overflow-y-auto custom-scrollbar"></div>
         </div>
       </div>
 
-      <!-- VIEW 2: CATALOG & OFFERINGS -->
+      <!-- ===================================================================== -->
+      <!-- VIEW 2: PRODUCTS & PRICING CATALOG                                    -->
+      <!-- ===================================================================== -->
       <div id="view-catalog" class="hidden h-full overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-bold text-white">Product Catalog & Offerings</h3>
-            <p class="text-[11px] text-slate-400">Available units, treatments, or tiers queried live by Voice AI agents.</p>
+            <h3 class="text-sm font-bold text-slate-900">Products & Pricing Catalog</h3>
+            <p class="text-[11px] text-slate-500">Official configurations, treatments, or tiers available to sales reps.</p>
           </div>
-          <button onclick="openNewOfferingModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-1.5 transition-all">
-            <i data-lucide="plus" class="w-4 h-4"></i>
+          <button onclick="openNewOfferingModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold flex items-center gap-1.5 shadow-xs transition-colors">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Add Item</span>
           </button>
         </div>
-        <div id="catalogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Populated dynamically -->
-        </div>
+        <div id="catalogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       </div>
 
-      <!-- VIEW 3: APPOINTMENTS LIST -->
+      <!-- ===================================================================== -->
+      <!-- VIEW 3: SCHEDULED APPOINTMENTS TABLE                                  -->
+      <!-- ===================================================================== -->
       <div id="view-appointments" class="hidden h-full overflow-y-auto custom-scrollbar">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-sm font-bold text-white">Scheduled Appointments</h3>
-            <p class="text-[11px] text-slate-400">All upcoming site visits, live demos, and OPD sessions booked by Voice Agents.</p>
+            <h3 class="text-sm font-bold text-slate-900">Scheduled Appointments</h3>
+            <p class="text-[11px] text-slate-500">All upcoming site visits, live product demonstrations, and consultations.</p>
           </div>
         </div>
-        <div class="bg-[#0F172A] rounded-2xl border border-slate-800 overflow-hidden">
+        <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 uppercase text-[10px] font-semibold">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[10px] font-bold">
               <tr>
-                <th class="p-3.5">Reference</th>
-                <th class="p-3.5">Prospect</th>
-                <th class="p-3.5">Type</th>
-                <th class="p-3.5">Date & Slot</th>
-                <th class="p-3.5">Status</th>
-                <th class="p-3.5">Notes</th>
+                <th class="p-3">Reference</th>
+                <th class="p-3">Prospect</th>
+                <th class="p-3">Type</th>
+                <th class="p-3">Date & Slot</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Notes</th>
               </tr>
             </thead>
-            <tbody id="appointmentsTableBody" class="divide-y divide-slate-800/60">
-              <!-- Populated dynamically -->
-            </tbody>
+            <tbody id="appointmentsTableBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- VIEW 4: CAMPAIGNS -->
+      <!-- ===================================================================== -->
+      <!-- VIEW 4: CAMPAIGN OVERVIEW                                             -->
+      <!-- ===================================================================== -->
       <div id="view-campaigns" class="hidden h-full overflow-y-auto custom-scrollbar">
-        <div class="max-w-3xl mx-auto bg-[#0F172A] p-6 rounded-2xl border border-slate-800">
+        <div class="max-w-3xl mx-auto bg-white p-6 rounded-xl border border-slate-200 shadow-2xs">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
-              <i data-lucide="megaphone" class="w-5 h-5"></i>
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <i data-lucide="send" class="w-5 h-5"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-white">Bulk Outbound Sales Campaign</h3>
-              <p class="text-[11px] text-slate-400">Upload CSV of 500+ leads and let Talkar Voice AI call and qualify them autonomously.</p>
+              <h3 class="text-sm font-bold text-slate-900">Outbound Contact List Campaign</h3>
+              <p class="text-[11px] text-slate-500">Queue a verified contact list for automated telephone outreach and qualification.</p>
             </div>
           </div>
 
           <div class="space-y-4">
-            <div class="border-2 border-dashed border-slate-700/80 rounded-2xl p-8 text-center bg-slate-900/40 hover:bg-slate-900/70 transition-colors cursor-pointer">
-              <i data-lucide="file-up" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
-              <div class="font-semibold text-white">Click to upload leads CSV</div>
+            <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50 hover:bg-slate-100/50 transition-colors cursor-pointer">
+              <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
+              <div class="font-semibold text-slate-800">Select or drop a CSV file of contacts</div>
               <div class="text-[11px] text-slate-500 mt-1">Columns: phone_number, name, category, budget</div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs space-y-2">
-              <div class="font-semibold text-slate-300">Campaign Execution Architecture</div>
-              <p class="text-slate-400 text-[11px]">
-                When triggered, Talkar Voice AI calls prospects during business hours. Each finished call triggers the webhook to <code class="text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">/api/webhooks/call-completed</code>, immediately pushing the card to the Kanban board above via Server-Sent Events.
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+              <div class="font-semibold text-slate-700">How outreach runs</div>
+              <p class="text-slate-600 text-[11px] leading-relaxed">
+                Contacts are reached out to during business hours. Call outcomes, customer requirements, and confirmed appointments immediately update the Pipeline Board above.
               </p>
             </div>
           </div>
@@ -369,84 +376,107 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: LEAD DETAIL / AUDIO PLAYER                                         -->
+  <!-- MODAL: LEAD DETAIL / AUDIO NOTES                                          -->
   <!-- ========================================================================= -->
-  <div id="leadModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-[#0F172A] border border-slate-800 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
-        <div class="flex items-center gap-2.5">
-          <div id="modalLeadAvatar" class="w-8 h-8 rounded-full bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xs">VM</div>
+  <div id="leadModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+        <div class="flex items-center gap-3">
+          <div id="modalLeadAvatar" class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs">VM</div>
           <div>
-            <h3 id="modalLeadName" class="font-bold text-sm text-white">Vikram Malhotra</h3>
-            <span id="modalLeadPhone" class="text-[11px] text-slate-400 font-mono">+91 98279 53551</span>
+            <h3 id="modalLeadName" class="font-bold text-sm text-slate-900">Vikram Malhotra</h3>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span id="modalLeadPhone" class="text-[11px] text-slate-500 font-mono">+91 98279 53551</span>
+              <a id="modalWhatsAppBtn" href="#" target="_blank" class="text-[10px] text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded font-semibold border border-emerald-200 flex items-center gap-1 transition-colors">
+                <i data-lucide="message-circle" class="w-3 h-3"></i> WhatsApp
+              </a>
+              <a id="modalCallBtn" href="#" class="text-[10px] text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded font-semibold border border-indigo-200 flex items-center gap-1 transition-colors">
+                <i data-lucide="phone" class="w-3 h-3"></i> Call
+              </a>
+            </div>
           </div>
         </div>
-        <button onclick="closeLeadModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+        <button onclick="closeLeadModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
+      <!-- Modal Body -->
       <div class="p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs">
-        <!-- BANT Scorecard -->
+        
+        <!-- Requirement & Priority Summary -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span class="text-[10px] text-slate-500 uppercase font-bold">Temperature</span>
-            <div id="modalLeadTemp" class="mt-1 font-bold text-red-400 flex items-center gap-1.5">
-              <i data-lucide="flame" class="w-4 h-4"></i> HOT LEAD
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] text-slate-500 uppercase font-semibold">Priority & Status</span>
+            <div id="modalLeadTemp" class="mt-1 font-bold text-rose-600 flex items-center gap-1">
+              🔥 Hot Lead
             </div>
           </div>
-          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span class="text-[10px] text-slate-500 uppercase font-bold">Budget & Timeline</span>
-            <div id="modalLeadBudget" class="mt-1 font-semibold text-slate-200">1.8 - 2.0 Cr • 60 Days</div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-[10px] text-slate-500 uppercase font-semibold">Budget & Timeline</span>
+            <div id="modalLeadBudget" class="mt-1 font-semibold text-slate-800">1.8 - 2.0 Cr • 60 Days</div>
           </div>
         </div>
 
-        <!-- AI Call Summary -->
-        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-          <div class="flex items-center gap-1.5 text-emerald-400 font-semibold mb-1.5">
-            <i data-lucide="bot" class="w-3.5 h-3.5"></i>
-            <span>Voice AI Call Summary</span>
+        <!-- Move Stage Selector -->
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+          <span class="text-slate-600 font-medium">Pipeline Stage</span>
+          <select id="modalStageSelect" onchange="handleModalStageChange(this.value)" class="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer">
+            <option value="NEW">New Inquiry</option>
+            <option value="QUALIFIED">Contacted & Qualified</option>
+            <option value="APPOINTMENT_BOOKED">Appointment Booked</option>
+            <option value="WON">Closed / Won</option>
+            <option value="LOST">Cold / Unresponsive</option>
+          </select>
+        </div>
+
+        <!-- Conversation Notes & Summary -->
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="flex items-center gap-1.5 text-slate-800 font-bold mb-1.5">
+            <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Conversation Summary & Notes</span>
           </div>
-          <p id="modalLeadSummary" class="text-slate-300 leading-relaxed text-[11px]">
-            Spoke for 4 mins on Voice AI. Loved the Garden Villa pricing. Booked Saturday morning site visit with complimentary cab pickup.
+          <p id="modalLeadSummary" class="text-slate-600 leading-relaxed text-[11px]">
+            Spoke for 4 mins. Interested in Garden Villa with private terrace. Booked Saturday morning site visit with complimentary cab pickup.
           </p>
         </div>
 
-        <!-- Audio Recording Player -->
-        <div id="modalAudioSection" class="p-3 rounded-xl bg-slate-900/40 border border-slate-800">
+        <!-- Audio Player -->
+        <div id="modalAudioSection" class="p-3 rounded-xl bg-slate-50 border border-slate-200">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
-              <i data-lucide="volume-2" class="w-3.5 h-3.5 text-blue-400"></i>
-              <span>Call Recording</span>
+            <span class="text-[11px] font-semibold text-slate-700 flex items-center gap-1.5">
+              <i data-lucide="volume-2" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>Call Audio Recording</span>
             </span>
-            <span id="modalCallRunId" class="text-[10px] font-mono text-slate-500">WR-89102</span>
           </div>
           <audio id="modalAudioPlayer" controls class="w-full h-8 outline-none"></audio>
         </div>
 
-        <!-- Appointment Details -->
-        <div id="modalAppointmentSection" class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-emerald-400 font-bold flex items-center gap-1.5">
-              <i data-lucide="calendar-check" class="w-4 h-4"></i>
+        <!-- Appointment Card -->
+        <div id="modalAppointmentSection" class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold flex items-center gap-1.5">
+              <i data-lucide="calendar-check" class="w-4 h-4 text-emerald-600"></i>
               <span id="modalAppointmentType">Site Visit Scheduled</span>
             </span>
-            <span id="modalAppointmentRef" class="font-mono text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">VISIT-4821</span>
+            <span id="modalAppointmentRef" class="font-mono text-[10px] bg-white text-emerald-800 px-2 py-0.5 rounded border border-emerald-200 font-bold">VISIT-4821</span>
           </div>
-          <div id="modalAppointmentTime" class="text-slate-200 font-medium">Saturday, Nov 28, 2026 at 11:30 AM</div>
-          <div id="modalAppointmentNotes" class="text-slate-400 text-[11px] mt-1">Guest requested Indiranagar cab pickup.</div>
+          <div id="modalAppointmentTime" class="text-emerald-800 font-medium">Saturday, Nov 28, 2026 at 11:30 AM</div>
+          <div id="modalAppointmentNotes" class="text-emerald-700 text-[11px] mt-0.5">Guest requested Indiranagar cab pickup.</div>
         </div>
 
-        <!-- Callback Action -->
-        <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
-          <div class="font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
-            <i data-lucide="phone-outgoing" class="w-3.5 h-3.5 text-amber-400"></i>
-            <span>Schedule Human Callback</span>
+        <!-- Callback Scheduler -->
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-600"></i>
+            <span>Schedule Follow-up Call</span>
           </div>
           <div class="flex gap-2">
-            <input type="datetime-local" id="manualCallbackTime" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
-            <button onclick="submitManualCallback()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-semibold transition-colors">
-              Set Callback
+            <input type="datetime-local" id="manualCallbackTime" class="flex-1 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800">
+            <button onclick="submitManualCallback()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-colors">
+              Set Follow-up
             </button>
           </div>
         </div>
@@ -455,60 +485,174 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: ADD NEW CLIENT COMPANY (5-Minute Onboarding)                       -->
+  <!-- MODAL: ADD NEW PROSPECT (LEAD)                                            -->
   <!-- ========================================================================= -->
-  <div id="newCompanyModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-sm text-white">Onboard New Client (5-Min Setup)</h3>
-        <button onclick="closeNewCompanyModal()" class="text-slate-400 hover:text-white">
-          <i data-lucide="x" class="w-5 h-5"></i>
+  <div id="newLeadModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-5">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-sm text-slate-900">Add New Prospect</h3>
+        <button onclick="closeNewLeadModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form onsubmit="handleCreateCompany(event)" class="space-y-3 text-xs">
+      <form onsubmit="handleCreateLead(event)" class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-400 font-medium mb-1">Company Name</label>
-          <input type="text" id="newCompanyName" required placeholder="e.g. Sobha Developers" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+          <label class="block text-slate-600 font-medium mb-1">Full Name</label>
+          <input type="text" id="leadFormName" required placeholder="e.g. Rajiv Kapoor" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-medium mb-1">Unique Slug</label>
-            <input type="text" id="newCompanySlug" required placeholder="sobha-devs" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono">
+            <label class="block text-slate-600 font-medium mb-1">Phone Number</label>
+            <input type="tel" id="leadFormPhone" required placeholder="+91 98200 12345" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-mono">
           </div>
           <div>
-            <label class="block text-slate-400 font-medium mb-1">Industry</label>
-            <select id="newCompanyIndustry" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
-              <option value="REAL_ESTATE">Real Estate</option>
-              <option value="HEALTHCARE_CLINIC">Healthcare / Clinic</option>
-              <option value="B2B_SAAS">B2B SaaS</option>
-              <option value="AUTOMOBILE">Automobile Dealership</option>
-              <option value="EDUCATION_COACHING">Education / Coaching</option>
-              <option value="GENERIC_SALES">Generic Sales</option>
+            <label class="block text-slate-600 font-medium mb-1">Email (Optional)</label>
+            <input type="email" id="leadFormEmail" placeholder="rajiv@example.com" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Priority</label>
+            <select id="leadFormTemp" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+              <option value="HOT">🔥 Hot</option>
+              <option value="WARM" selected>☀️ Warm</option>
+              <option value="COLD">❄️ Cold</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Stage</label>
+            <select id="leadFormStage" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+              <option value="NEW" selected>New Inquiry</option>
+              <option value="QUALIFIED">Contacted & Qualified</option>
+              <option value="APPOINTMENT_BOOKED">Appointment Booked</option>
             </select>
           </div>
         </div>
-        <div>
-          <label class="block text-slate-400 font-medium mb-1">City / Location</label>
-          <input type="text" id="newCompanyCity" placeholder="Bangalore, Mumbai, Delhi..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Budget</label>
+            <input type="text" id="leadFormBudget" placeholder="e.g. ₹1.5 Cr, $50k" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Timeline</label>
+            <input type="text" id="leadFormTimeline" placeholder="e.g. 30 Days, Q1" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+          </div>
         </div>
-        <button type="submit" class="w-full mt-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors">
-          Create & Switch Account
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Notes & Requirements</label>
+          <textarea id="leadFormNotes" rows="2" placeholder="Specific requirements or preferences..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800"></textarea>
+        </div>
+        <button type="submit" class="w-full mt-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors">
+          Save Prospect
         </button>
       </form>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT APP CONTROLLER                                                 -->
+  <!-- MODAL: ADD NEW OFFERING / PRODUCT                                         -->
+  <!-- ========================================================================= -->
+  <div id="newOfferingModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-5">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-sm text-slate-900">Add Product or Offering</h3>
+        <button onclick="closeNewOfferingModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreateOffering(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Title / Configuration Name</label>
+          <input type="text" id="offeringFormTitle" required placeholder="e.g. 3BHK Lakeview Penthouse" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Code</label>
+            <input type="text" id="offeringFormCode" placeholder="PRESTIGE-3BHK" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Category</label>
+            <input type="text" id="offeringFormCategory" placeholder="Residential, OPD, SaaS..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Price (Amount)</label>
+          <input type="number" id="offeringFormPrice" required placeholder="18500000" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+        </div>
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Brochure / Documentation URL</label>
+          <input type="url" id="offeringFormBrochure" placeholder="https://example.com/brochure.pdf" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+        </div>
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Description</label>
+          <textarea id="offeringFormDesc" rows="2" placeholder="Key specs, sq ft, warranty, inclusions..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800"></textarea>
+        </div>
+        <button type="submit" class="w-full mt-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors">
+          Add to Catalog
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ADD NEW WORKSPACE (COMPANY)                                        -->
+  <!-- ========================================================================= -->
+  <div id="newCompanyModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-5">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+        <h3 class="font-bold text-sm text-slate-900">Add Workspace / Client Account</h3>
+        <button onclick="closeNewCompanyModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreateCompany(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Company / Brand Name</label>
+          <input type="text" id="newCompanyName" required placeholder="e.g. Sobha Luxury Homes" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Unique Slug</label>
+            <input type="text" id="newCompanySlug" required placeholder="sobha-homes" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1">Industry</label>
+            <select id="newCompanyIndustry" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+              <option value="REAL_ESTATE">Real Estate</option>
+              <option value="HEALTHCARE_CLINIC">Healthcare / Clinic</option>
+              <option value="B2B_SAAS">B2B SaaS</option>
+              <option value="AUTOMOBILE">Automobile</option>
+              <option value="EDUCATION_COACHING">Education / Coaching</option>
+              <option value="GENERIC_SALES">General Business</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-600 font-medium mb-1">Primary Market / City</label>
+          <input type="text" id="newCompanyCity" placeholder="Bangalore, Mumbai, Delhi..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800">
+        </div>
+        <button type="submit" class="w-full mt-2 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors">
+          Create & Open Workspace
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FRONTEND SCRIPT CONTROLLER                                                -->
   <!-- ========================================================================= -->
   <script>
     let activeSlug = 'prestige-group';
     let currentCompany = null;
-    let sseSource = null;
+    let allLeads = [];
     let activeLeadData = null;
+    let sseSource = null;
+    let searchQuery = '';
+    let tempFilter = 'ALL';
 
-    // Check if URL has slug (e.g. /clove-dental)
     const pathSlug = window.location.pathname.replace(/^\//, '').split('/')[0];
     if (pathSlug && pathSlug !== 'dashboard') {
       activeSlug = pathSlug;
@@ -556,12 +700,15 @@
         if (!data.company) return;
         currentCompany = data.company;
 
-        // Update UI Badges
-        document.getElementById('activeCompanyBadge').textContent = currentCompany.name;
+        // Update UI Badges & Terminology
+        document.getElementById('activeCompanyName').textContent = currentCompany.name;
+        document.getElementById('activeCompanySubtitle').textContent = `${currentCompany.industry.replace('_', ' ')} Pipeline`;
         document.getElementById('industryBadge').textContent = currentCompany.industry.replace('_', ' ');
         document.getElementById('offeringNounBadge').textContent = currentCompany.offeringNoun;
         document.getElementById('appointmentNounBadge').textContent = currentCompany.appointmentNoun;
-        document.getElementById('colHeaderAppointment').textContent = `${currentCompany.appointmentNoun} Booked`;
+        document.getElementById('colHeaderAppointment').textContent = `${currentCompany.appointmentNoun}s Booked`;
+        document.getElementById('navCatalogLabel').textContent = `${currentCompany.offeringNoun}s`;
+        document.getElementById('navAppointmentsLabel').textContent = `${currentCompany.appointmentNoun}s`;
 
         await loadLeads(slug);
         await loadOfferings(slug);
@@ -575,10 +722,41 @@
       try {
         const res = await fetch(`/api/companies/${slug}/leads`);
         const data = await res.json();
-        renderKanban(data.leads || []);
+        allLeads = data.leads || [];
+        applyFilterAndRender();
       } catch (err) {
         console.error('Error loading leads:', err);
       }
+    }
+
+    function handleSearch(q) {
+      searchQuery = q.toLowerCase().trim();
+      applyFilterAndRender();
+    }
+
+    function handleTempFilter(temp) {
+      tempFilter = temp;
+      applyFilterAndRender();
+    }
+
+    function applyFilterAndRender() {
+      let filtered = allLeads;
+
+      if (tempFilter !== 'ALL') {
+        filtered = filtered.filter((l) => l.temperature === tempFilter);
+      }
+
+      if (searchQuery) {
+        filtered = filtered.filter((l) =>
+          l.name.toLowerCase().includes(searchQuery) ||
+          l.phone.toLowerCase().includes(searchQuery) ||
+          (l.email && l.email.toLowerCase().includes(searchQuery)) ||
+          (l.summary && l.summary.toLowerCase().includes(searchQuery)) ||
+          (l.need && l.need.toLowerCase().includes(searchQuery))
+        );
+      }
+
+      renderKanban(filtered);
     }
 
     function renderKanban(leads) {
@@ -607,7 +785,6 @@
         col.appendChild(card);
       });
 
-      // Update Top Metrics
       document.getElementById('statHot').textContent = hotCount;
       document.getElementById('statBooked').textContent = bookedCount;
       document.getElementById('statCallbacks').textContent = callbackCount;
@@ -626,39 +803,47 @@
     function createLeadCard(lead) {
       const div = document.createElement('div');
       div.id = `lead-card-${lead.id}`;
-      div.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shadow-md text-xs space-y-2.5';
+      div.className = 'p-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all cursor-pointer shadow-2xs text-xs space-y-2';
       div.onclick = () => openLeadModal(lead);
 
-      // Temperature styling
-      let tempBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">☀️ WARM</span>`;
+      // Temperature badge
+      let tempBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">☀️ Warm</span>`;
       if (lead.temperature === 'HOT') {
-        tempBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">🔥 HOT</span>`;
+        tempBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">🔥 Hot</span>`;
       } else if (lead.temperature === 'COLD') {
-        tempBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">❄️ COLD</span>`;
+        tempBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200">❄️ Cold</span>`;
       }
 
       const appointment = lead.appointments && lead.appointments.length > 0 ? lead.appointments[0] : null;
+      const cleanDigits = lead.phone.replace(/\D/g, '');
 
       div.innerHTML = `
         <div class="flex items-center justify-between">
-          <div class="font-bold text-white text-xs tracking-tight">${escapeHtml(lead.name)}</div>
+          <span class="font-bold text-slate-900 text-xs">${escapeHtml(lead.name)}</span>
           ${tempBadge}
         </div>
-        <div class="font-mono text-[11px] text-slate-400 flex items-center gap-1">
-          <i data-lucide="phone" class="w-3 h-3 text-slate-500"></i>
+        <div class="flex items-center justify-between text-slate-500 font-mono text-[11px]">
           <span>${escapeHtml(lead.phone)}</span>
+          <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
+            <a href="https://wa.me/${cleanDigits}" target="_blank" class="text-emerald-600 hover:text-emerald-700 p-0.5" title="Open WhatsApp">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+            </a>
+            <a href="tel:${escapeHtml(lead.phone)}" class="text-indigo-600 hover:text-indigo-700 p-0.5" title="Call">
+              <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
         </div>
-        ${lead.summary ? `<p class="text-slate-400 text-[11px] line-clamp-2 leading-relaxed bg-slate-950/40 p-2 rounded-lg">${escapeHtml(lead.summary)}</p>` : ''}
+        ${lead.summary ? `<p class="text-slate-600 text-[11px] line-clamp-2 leading-relaxed bg-slate-50 p-2 rounded-lg border border-slate-100">${escapeHtml(lead.summary)}</p>` : ''}
         ${appointment ? `
-          <div class="p-2 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-[11px] text-emerald-300 flex items-center justify-between">
-            <span class="font-medium">📅 ${escapeHtml(appointment.date)} • ${escapeHtml(appointment.timeSlot)}</span>
-            <span class="font-mono text-[9px] text-emerald-400 font-bold">${escapeHtml(appointment.reference)}</span>
+          <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-100 text-[11px] text-emerald-800 flex items-center justify-between">
+            <span class="font-medium">${escapeHtml(appointment.date)} • ${escapeHtml(appointment.timeSlot)}</span>
+            <span class="font-mono text-[9px] font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded border border-emerald-200">${escapeHtml(appointment.reference)}</span>
           </div>
         ` : ''}
         ${lead.callbackAt ? `
-          <div class="text-[10px] text-amber-400 flex items-center gap-1 font-medium">
-            <i data-lucide="clock" class="w-3 h-3"></i>
-            <span>Callback queued: ${new Date(lead.callbackAt).toLocaleDateString()}</span>
+          <div class="text-[10px] text-amber-700 flex items-center gap-1 font-medium bg-amber-50/60 p-1.5 rounded">
+            <i data-lucide="clock" class="w-3 h-3 text-amber-600"></i>
+            <span>Follow-up: ${new Date(lead.callbackAt).toLocaleDateString()}</span>
           </div>
         ` : ''}
       `;
@@ -676,26 +861,25 @@
         if (data.items && data.items.length > 0) {
           data.items.forEach((item) => {
             const card = document.createElement('div');
-            card.className = 'p-4 rounded-2xl bg-[#0F172A] border border-slate-800 space-y-3';
+            card.className = 'p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2.5';
             card.innerHTML = `
               <div class="flex items-start justify-between">
                 <div>
-                  <span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">${escapeHtml(item.code)}</span>
-                  <h4 class="font-bold text-sm text-white mt-1.5">${escapeHtml(item.title)}</h4>
+                  <span class="text-[10px] font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${escapeHtml(item.code)}</span>
+                  <h4 class="font-bold text-sm text-slate-900 mt-1">${escapeHtml(item.title)}</h4>
                 </div>
                 <div class="text-right">
-                  <div class="font-bold text-emerald-400 text-sm">${escapeHtml(item.formattedPrice)}</div>
+                  <div class="font-bold text-slate-900 text-sm">${escapeHtml(item.formattedPrice)}</div>
                   <span class="text-[10px] text-slate-500">${escapeHtml(item.category)}</span>
                 </div>
               </div>
-              <p class="text-slate-400 text-xs leading-relaxed">${escapeHtml(item.description || 'No description provided')}</p>
+              <p class="text-slate-600 text-xs leading-relaxed">${escapeHtml(item.description || 'No description provided')}</p>
               ${item.brochureUrl ? `
-                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                  <a href="${item.brochureUrl}" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1 text-[11px] font-semibold">
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <a href="${item.brochureUrl}" target="_blank" class="text-indigo-600 hover:underline flex items-center gap-1 text-[11px] font-semibold">
                     <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                    <span>View Brochure PDF</span>
+                    <span>Brochure / Documentation</span>
                   </a>
-                  <span class="text-[10px] text-purple-400 font-mono">Dispatched via n8n</span>
                 </div>
               ` : ''}
             `;
@@ -718,14 +902,14 @@
         if (data.appointments && data.appointments.length > 0) {
           data.appointments.forEach((apt) => {
             const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-900/50 transition-colors';
+            tr.className = 'hover:bg-slate-50 transition-colors';
             tr.innerHTML = `
-              <td class="p-3.5 font-mono text-emerald-400 font-bold">${escapeHtml(apt.reference)}</td>
-              <td class="p-3.5 font-semibold text-white">${escapeHtml(apt.lead ? apt.lead.name : 'Unknown')}<div class="text-[10px] text-slate-500 font-mono">${escapeHtml(apt.lead ? apt.lead.phone : '')}</div></td>
-              <td class="p-3.5 text-slate-300">${escapeHtml(apt.type)}</td>
-              <td class="p-3.5 text-slate-200 font-medium">${escapeHtml(apt.date)} at ${escapeHtml(apt.timeSlot)}</td>
-              <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${escapeHtml(apt.status)}</span></td>
-              <td class="p-3.5 text-slate-400 text-[11px]">${escapeHtml(apt.notes || '—')}</td>
+              <td class="p-3 font-mono text-indigo-600 font-bold">${escapeHtml(apt.reference)}</td>
+              <td class="p-3 font-semibold text-slate-900">${escapeHtml(apt.lead ? apt.lead.name : 'Unknown')}<div class="text-[10px] text-slate-500 font-mono">${escapeHtml(apt.lead ? apt.lead.phone : '')}</div></td>
+              <td class="p-3 text-slate-700">${escapeHtml(apt.type)}</td>
+              <td class="p-3 text-slate-800 font-medium">${escapeHtml(apt.date)} at ${escapeHtml(apt.timeSlot)}</td>
+              <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">${escapeHtml(apt.status)}</span></td>
+              <td class="p-3 text-slate-500 text-[11px]">${escapeHtml(apt.notes || '—')}</td>
             `;
             tbody.appendChild(tr);
           });
@@ -735,23 +919,20 @@
       }
     }
 
-    // Connect to Server-Sent Events Live Stream
     function connectSSE(slug) {
       if (sseSource) sseSource.close();
 
       sseSource = new EventSource(`/api/events/leads?company=${slug}`);
 
       sseSource.addEventListener('connected', () => {
-        document.getElementById('sseStatusText').textContent = 'SSE Stream Live';
+        document.getElementById('sseStatusText').textContent = 'Synced live';
       });
 
-      sseSource.addEventListener('lead_updated', (e) => {
-        console.log('⚡ SSE Lead Updated:', e.data);
+      sseSource.addEventListener('lead_updated', () => {
         loadLeads(activeSlug);
       });
 
-      sseSource.addEventListener('call_completed', (e) => {
-        console.log('⚡ SSE Call Completed:', e.data);
+      sseSource.addEventListener('call_completed', () => {
         loadLeads(activeSlug);
         loadAppointments(activeSlug);
       });
@@ -768,10 +949,10 @@
         if (el && nav) {
           if (v === viewName) {
             el.classList.remove('hidden');
-            nav.className = 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 transition-all text-left';
+            nav.className = 'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 transition-all text-left';
           } else {
             el.classList.add('hidden');
-            nav.className = 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left';
+            nav.className = 'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition-all text-left';
           }
         }
       });
@@ -783,16 +964,20 @@
       document.getElementById('modalLeadName').textContent = lead.name;
       document.getElementById('modalLeadPhone').textContent = lead.phone;
       document.getElementById('modalLeadAvatar').textContent = lead.name.slice(0, 2).toUpperCase();
-      document.getElementById('modalLeadTemp').innerHTML = `<i data-lucide="flame" class="w-4 h-4"></i> ${lead.temperature} LEAD`;
-      document.getElementById('modalLeadBudget').textContent = `${lead.budget || 'Budget unstated'} • ${lead.timeline || 'Immediate'}`;
-      document.getElementById('modalLeadSummary').textContent = lead.summary || 'No call summary recorded yet.';
+      document.getElementById('modalLeadTemp').innerHTML = lead.temperature === 'HOT' ? '🔥 Hot Lead' : (lead.temperature === 'WARM' ? '☀️ Warm Prospect' : '❄️ Cold');
+      document.getElementById('modalLeadBudget').textContent = `${lead.budget || 'Standard'} • ${lead.timeline || 'Immediate'}`;
+      document.getElementById('modalLeadSummary').textContent = lead.summary || lead.notes || 'No notes recorded yet.';
+      document.getElementById('modalStageSelect').value = lead.stage || 'NEW';
+
+      const cleanDigits = lead.phone.replace(/\D/g, '');
+      document.getElementById('modalWhatsAppBtn').href = `https://wa.me/${cleanDigits}`;
+      document.getElementById('modalCallBtn').href = `tel:${lead.phone}`;
 
       const audioSec = document.getElementById('modalAudioSection');
       const audioPlayer = document.getElementById('modalAudioPlayer');
       if (lead.recordingUrl) {
         audioSec.classList.remove('hidden');
         audioPlayer.src = lead.recordingUrl;
-        document.getElementById('modalCallRunId').textContent = lead.callRunId || 'WR-DEMO';
       } else {
         audioSec.classList.add('hidden');
       }
@@ -817,6 +1002,94 @@
       const audioPlayer = document.getElementById('modalAudioPlayer');
       if (audioPlayer) audioPlayer.pause();
       document.getElementById('leadModal').classList.add('hidden');
+    }
+
+    async function handleModalStageChange(newStage) {
+      if (!activeLeadData) return;
+      try {
+        const res = await fetch(`/api/companies/${activeSlug}/leads/${activeLeadData.id}/stage`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stage: newStage }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          activeLeadData.stage = newStage;
+          loadLeads(activeSlug);
+        }
+      } catch (err) {
+        alert('Failed to update stage: ' + err.message);
+      }
+    }
+
+    function openNewLeadModal() {
+      document.getElementById('newLeadModal').classList.remove('hidden');
+    }
+
+    function closeNewLeadModal() {
+      document.getElementById('newLeadModal').classList.add('hidden');
+    }
+
+    async function handleCreateLead(e) {
+      e.preventDefault();
+      const name = document.getElementById('leadFormName').value;
+      const phone = document.getElementById('leadFormPhone').value;
+      const email = document.getElementById('leadFormEmail').value;
+      const temperature = document.getElementById('leadFormTemp').value;
+      const stage = document.getElementById('leadFormStage').value;
+      const budget = document.getElementById('leadFormBudget').value;
+      const timeline = document.getElementById('leadFormTimeline').value;
+      const notes = document.getElementById('leadFormNotes').value;
+
+      try {
+        const res = await fetch(`/api/companies/${activeSlug}/leads`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone, email, temperature, stage, budget, timeline, notes }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeNewLeadModal();
+          e.target.reset();
+          loadLeads(activeSlug);
+        }
+      } catch (err) {
+        alert('Failed to save prospect: ' + err.message);
+      }
+    }
+
+    function openNewOfferingModal() {
+      document.getElementById('newOfferingModal').classList.remove('hidden');
+    }
+
+    function closeNewOfferingModal() {
+      document.getElementById('newOfferingModal').classList.add('hidden');
+    }
+
+    async function handleCreateOffering(e) {
+      e.preventDefault();
+      const title = document.getElementById('offeringFormTitle').value;
+      const code = document.getElementById('offeringFormCode').value;
+      const category = document.getElementById('offeringFormCategory').value;
+      const price = document.getElementById('offeringFormPrice').value;
+      const brochureUrl = document.getElementById('offeringFormBrochure').value;
+      const description = document.getElementById('offeringFormDesc').value;
+
+      try {
+        const res = await fetch(`/api/companies/${activeSlug}/offerings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, code, category, price, brochureUrl, description }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeNewOfferingModal();
+          e.target.reset();
+          loadOfferings(activeSlug);
+        }
+      } catch (err) {
+        alert('Failed to save offering: ' + err.message);
+      }
     }
 
     function openNewCompanyModal() {
@@ -855,7 +1128,7 @@
       if (!activeLeadData) return;
       const time = document.getElementById('manualCallbackTime').value;
       if (!time) {
-        alert('Please choose a callback time');
+        alert('Please select a callback date and time');
         return;
       }
 
@@ -867,18 +1140,47 @@
             lead_phone: activeLeadData.phone,
             lead_name: activeLeadData.name,
             callback_time: new Date(time).toISOString(),
-            reason: 'Queued from Sales CRM Dashboard',
+            reason: 'Scheduled from Pipeline Board',
           }),
         });
         const data = await res.json();
         if (data.success) {
-          alert('Callback scheduled successfully!');
+          alert('Follow-up scheduled successfully!');
           closeLeadModal();
           loadLeads(activeSlug);
         }
       } catch (err) {
-        alert('Callback schedule failed: ' + err.message);
+        alert('Follow-up schedule failed: ' + err.message);
       }
+    }
+
+    function exportPipelineCSV() {
+      if (!allLeads || allLeads.length === 0) {
+        alert('No leads to export');
+        return;
+      }
+
+      const headers = ['Name', 'Phone', 'Email', 'Temperature', 'Stage', 'Budget', 'Timeline', 'Summary', 'Notes'];
+      const rows = allLeads.map((l) => [
+        `"${(l.name || '').replace(/"/g, '""')}"`,
+        `"${(l.phone || '').replace(/"/g, '""')}"`,
+        `"${(l.email || '').replace(/"/g, '""')}"`,
+        `"${l.temperature || ''}"`,
+        `"${l.stage || ''}"`,
+        `"${(l.budget || '').replace(/"/g, '""')}"`,
+        `"${(l.timeline || '').replace(/"/g, '""')}"`,
+        `"${(l.summary || '').replace(/"/g, '""')}"`,
+        `"${(l.notes || '').replace(/"/g, '""')}"`,
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `${activeSlug}-pipeline-${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function escapeHtml(str) {
