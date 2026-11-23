@@ -44,15 +44,22 @@ appointmentsRouter.post('/', async (req: Request, res: Response) => {
       appointment_type,
       slot_date,
       slot_time,
+      date,
+      time_slot,
+      type,
       notes,
       source,
       call_run_id,
     } = req.body;
 
-    if (!lead_phone || !slot_date || !slot_time) {
+    const finalDate = slot_date || date;
+    const finalTime = slot_time || time_slot;
+    const finalType = appointment_type || type;
+
+    if (!lead_phone || !finalDate || !finalTime) {
       return res.status(400).json({
         success: false,
-        error: 'lead_phone, slot_date, and slot_time are required',
+        error: 'lead_phone, slot_date/date, and slot_time/time_slot are required',
       });
     }
 
@@ -60,9 +67,9 @@ appointmentsRouter.post('/', async (req: Request, res: Response) => {
       leadName: lead_name,
       leadPhone: lead_phone,
       leadEmail: lead_email,
-      appointmentType: appointment_type,
-      slotDate: slot_date,
-      slotTime: slot_time,
+      appointmentType: finalType,
+      slotDate: finalDate,
+      slotTime: finalTime,
       notes,
       source,
       callRunId: call_run_id,
