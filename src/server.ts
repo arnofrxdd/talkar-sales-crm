@@ -26,6 +26,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static brochures and public assets
+app.use('/brochures', express.static(path.join(process.cwd(), 'public', 'brochures')));
+
 // Helper to resolve dashboard html file
 function getDashboardHtmlPath(): string | null {
   const possiblePaths = [

@@ -5,6 +5,24 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seed for Talkar Universal Sales CRM...');
 
+  const leadCount = await prisma.lead.count();
+  if (leadCount > 0) {
+    console.log('🌱 Database already contains data. Updating brochure URLs and skipping duplicate seed.');
+    await prisma.offering.updateMany({
+      where: { code: 'PRESTIGE-2BHK' },
+      data: { brochureUrl: '/brochures/prestige-2bhk-lakeview.pdf' }
+    });
+    await prisma.offering.updateMany({
+      where: { code: 'PRESTIGE-3BHK-LUX' },
+      data: { brochureUrl: '/brochures/prestige-3bhk-garden-villa.pdf' }
+    });
+    await prisma.offering.updateMany({
+      where: { code: 'PRESTIGE-4BHK-PENT' },
+      data: { brochureUrl: '/brochures/prestige-4bhk-sky-penthouse.pdf' }
+    });
+    return;
+  }
+
   // 1. REAL ESTATE: Prestige Group
   const prestige = await prisma.company.upsert({
     where: { slug: 'prestige-group' },
@@ -36,7 +54,7 @@ async function main() {
             currency: 'INR',
             specs: JSON.stringify({ sqft: 1280, facing: 'North-East', possession: 'Ready to Move', clubAccess: true }),
             photos: JSON.stringify(['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80']),
-            brochureUrl: 'https://prestigeconstructions.com/brochures/lakeview-2bhk.pdf',
+            brochureUrl: '/brochures/prestige-2bhk-lakeview.pdf',
           },
           {
             code: 'PRESTIGE-3BHK-LUX',
@@ -47,7 +65,7 @@ async function main() {
             currency: 'INR',
             specs: JSON.stringify({ sqft: 2450, facing: 'East', possession: 'March 2027', parking: '2 Covered Slots' }),
             photos: JSON.stringify(['https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80']),
-            brochureUrl: 'https://prestigeconstructions.com/brochures/garden-villa-3bhk.pdf',
+            brochureUrl: '/brochures/prestige-3bhk-garden-villa.pdf',
           },
           {
             code: 'PRESTIGE-4BHK-PENT',
@@ -58,7 +76,7 @@ async function main() {
             currency: 'INR',
             specs: JSON.stringify({ sqft: 4100, facing: 'East', floor: 32, privatePool: true }),
             photos: JSON.stringify(['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80']),
-            brochureUrl: 'https://prestigeconstructions.com/brochures/sky-penthouse.pdf',
+            brochureUrl: '/brochures/prestige-4bhk-sky-penthouse.pdf',
           },
         ],
       },

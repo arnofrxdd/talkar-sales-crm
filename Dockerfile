@@ -15,9 +15,11 @@ RUN npm ci
 # Generate Prisma client
 RUN npx prisma generate
 
-# Copy source code and config
+# Copy source code, assets and config
 COPY tsconfig.json ./
 COPY src ./src/
+COPY public ./public/
+COPY scripts ./scripts/
 COPY docker-entrypoint.sh ./
 
 RUN chmod +x ./docker-entrypoint.sh
