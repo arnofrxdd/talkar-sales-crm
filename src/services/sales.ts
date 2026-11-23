@@ -27,6 +27,35 @@ export interface ScheduleCallbackInput {
   reason?: string;
 }
 
+function parseFlexibleCallbackDate(timeStr?: string): Date | null {
+  if (!timeStr) return null;
+  const str = timeStr.trim().toLowerCase();
+  const d = new Date(timeStr);
+  if (!isNaN(d.getTime())) return d;
+
+  const now = new Date();
+  const baseDate = new Date(now);
+
+  if (str.includes('tomorrow')) {
+    baseDate.setDate(now.getDate() + 1);
+  } else if (str.includes('day after')) {
+    baseDate.setDate(now.getDate() + 2);
+  } else {
+    return null;
+  }
+
+  const timeMatch = str.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i);
+  if (timeMatch) {
+    let hours = parseInt(timeMatch[1], 10);
+    const mins = timeMatch[2] ? parseInt(timeMatch[2], 10) : 0;
+    const meridian = timeMatch[3].toLowerCase();
+    if (meridian === 'pm' && hours < 12) hours += 12;
+    if (meridian === 'am' && hours === 12) hours = 0;
+    baseDate.setHours(hours, mins, 0, 0);
+  }
+  return baseDate;
+}
+
 export class SalesService {
   /**
    * Find company by slug
@@ -266,7 +295,7 @@ export class SalesService {
     }
 
     const cleanPhone = sanitizePhone(input.leadPhone);
-    const callbackDate = new Date(input.callbackTime);
+    const callbackDate = parseFlexibleCallbackDate(input.callbackTime);
 
     let lead = await prisma.lead.findFirst({
       where: {
@@ -282,7 +311,7 @@ export class SalesService {
           name: input.leadName || lead.name,
           temperature: 'WARM',
           stage: 'QUALIFIED',
-          callbackAt: isNaN(callbackDate.getTime()) ? null : callbackDate,
+          callbackAt: callbackDate,
           callbackReason: input.reason || 'Requested callback during call',
         },
       });
@@ -294,7 +323,7 @@ export class SalesService {
           phone: cleanPhone,
           temperature: 'WARM',
           stage: 'QUALIFIED',
-          callbackAt: isNaN(callbackDate.getTime()) ? null : callbackDate,
+          callbackAt: callbackDate,
           callbackReason: input.reason || 'Requested callback during call',
         },
       });
