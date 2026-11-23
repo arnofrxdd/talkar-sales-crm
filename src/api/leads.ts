@@ -88,40 +88,71 @@ leadsRouter.post('/', async (req: Request, res: Response) => {
 
     const cleanPhone = sanitizePhone(phone);
 
-    const lead = await prisma.lead.upsert({
-      where: {
-        id: req.body.id || 'non-existent-uuid',
-      },
-      update: {
-        name: name || undefined,
-        email: email || undefined,
-        city: city || undefined,
-        temperature: temperature ? String(temperature).toUpperCase() : undefined,
-        stage: stage ? String(stage).toUpperCase() : undefined,
-        budget: budget || undefined,
-        timeline: timeline || undefined,
-        need: need || undefined,
-        notes: notes || undefined,
-      },
-      create: {
-        companyId: company.id,
-        name: name || 'Direct Prospect',
-        phone: cleanPhone,
-        email,
-        city,
-        temperature: temperature ? String(temperature).toUpperCase() : 'WARM',
-        stage: stage ? String(stage).toUpperCase() : 'NEW',
-        budget,
-        timeline,
-        need,
-        notes,
-        source: 'MANUAL',
-      },
-    });
+    // Look for existing lead with same ID or same phone
+    let existingLead = null;
+    if (req.body.id) {
+      existingLead = await prisma.lead.findUnique({ where: { id: req.body.id } });
+    }
+    if (!existingLead && cleanPhone) {
+      existingLead = await prisma.lead.findFirst({
+        where: { companyId: company.id, phone: cleanPhone },
+      });
+    }
+
+    let lead;
+    if (existingLead) {
+      lead = await prisma.lead.update({
+        where: { id: existingLead.id },
+        data: {
+          name: name || undefined,
+          email: email || undefined,
+          city: city || undefined,
+          temperature: temperature ? String(temperature).toUpperCase() : undefined,
+          stage: stage ? String(stage).toUpperCase() : undefined,
+          budget: budget || undefined,
+          timeline: timeline || undefined,
+          need: need || undefined,
+          notes: notes || undefined,
+        },
+      });
+    } else {
+      lead = await prisma.lead.create({
+        data: {
+          companyId: company.id,
+          name: name || 'Direct Prospect',
+          phone: cleanPhone,
+          email,
+          city,
+          temperature: temperature ? String(temperature).toUpperCase() : 'WARM',
+          stage: stage ? String(stage).toUpperCase() : 'NEW',
+          budget,
+          timeline,
+          need,
+          notes,
+          source: 'MANUAL',
+        },
+      });
+    }
 
     eventService.broadcast('lead_updated', { companySlug: slug, lead }, slug);
 
     res.status(201).json({ success: true, lead });
+  } catch (err: any) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/companies/:slug/leads/:id - Delete lead
+leadsRouter.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const { slug, id } = req.params;
+    await prisma.lead.delete({
+      where: { id },
+    });
+
+    eventService.broadcast('lead_deleted', { companySlug: slug, leadId: id }, slug);
+
+    res.json({ success: true, message: 'Lead deleted' });
   } catch (err: any) {
     res.status(400).json({ success: false, error: err.message });
   }

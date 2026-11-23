@@ -147,12 +147,26 @@ export class SalesService {
     const reference = generateReference(prefix);
 
     // Find or create lead
-    let lead = await prisma.lead.findFirst({
+    const existingLeads = await prisma.lead.findMany({
       where: {
         companyId: company.id,
         phone: cleanPhone,
       },
+      orderBy: { updatedAt: 'desc' },
     });
+
+    let lead = existingLeads[0];
+
+    // Clean up empty duplicate leads with the same phone if they have no appointments
+    if (existingLeads.length > 1) {
+      for (let i = 1; i < existingLeads.length; i++) {
+        const dup = existingLeads[i];
+        const aptCount = await prisma.appointment.count({ where: { leadId: dup.id } });
+        if (aptCount === 0) {
+          await prisma.lead.delete({ where: { id: dup.id } }).catch(() => {});
+        }
+      }
+    }
 
     if (lead) {
       lead = await prisma.lead.update({

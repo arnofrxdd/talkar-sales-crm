@@ -416,9 +416,14 @@
             </div>
           </div>
         </div>
-        <button onclick="closeLeadModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
+        <div class="flex items-center gap-1">
+          <button onclick="deleteCurrentLead()" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-colors" title="Delete lead">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+          <button onclick="closeLeadModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Modal Body -->
@@ -1135,6 +1140,26 @@
     async function triggerModalAiCall() {
       if (!activeLeadData) return;
       await triggerAiCall(activeLeadData.id, activeLeadData.name);
+    }
+
+    async function deleteCurrentLead() {
+      if (!activeLeadData) return;
+      if (!confirm(`Are you sure you want to delete lead "${activeLeadData.name}"?`)) return;
+      try {
+        const res = await fetch(`/api/companies/${activeSlug}/leads/${activeLeadData.id}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeLeadModal();
+          showToast('Lead deleted successfully', 'info');
+          loadLeads(activeSlug);
+        } else {
+          showToast('Failed to delete lead: ' + (data.error || 'Server error'), 'error');
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      }
     }
 
     function openNewLeadModal() {
