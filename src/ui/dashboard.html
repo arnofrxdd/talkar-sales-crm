@@ -404,11 +404,14 @@
             <h3 id="modalLeadName" class="font-bold text-sm text-slate-900">Vikram Malhotra</h3>
             <div class="flex items-center gap-2 mt-0.5">
               <span id="modalLeadPhone" class="text-[11px] text-slate-500 font-mono">+91 98279 53551</span>
+              <button id="modalAiCallBtn" onclick="triggerModalAiCall()" class="text-[10px] text-white bg-indigo-600 hover:bg-indigo-700 px-2 py-0.5 rounded font-semibold flex items-center gap-1 shadow-xs transition-colors" title="Dispatch AI Voice Agent Call">
+                <i data-lucide="bot" class="w-3 h-3"></i> Call with AI
+              </button>
               <a id="modalWhatsAppBtn" href="#" target="_blank" class="text-[10px] text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded font-semibold border border-emerald-200 flex items-center gap-1 transition-colors">
                 <i data-lucide="message-circle" class="w-3 h-3"></i> WhatsApp
               </a>
-              <a id="modalCallBtn" href="#" class="text-[10px] text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded font-semibold border border-indigo-200 flex items-center gap-1 transition-colors">
-                <i data-lucide="phone" class="w-3 h-3"></i> Call
+              <a id="modalCallBtn" href="#" class="text-[10px] text-slate-700 bg-slate-50 hover:bg-slate-100 px-1.5 py-0.5 rounded font-semibold border border-slate-200 flex items-center gap-1 transition-colors">
+                <i data-lucide="phone" class="w-3 h-3"></i> Phone
               </a>
             </div>
           </div>
@@ -877,10 +880,13 @@
         <div class="flex items-center justify-between text-slate-500 font-mono text-[11px]">
           <span>${escapeHtml(lead.phone)}</span>
           <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
+            <button onclick="triggerAiCall('${lead.id}', '${escapeHtml(lead.name)}')" class="text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-indigo-200 flex items-center gap-1 transition-all" title="Dispatch AI Voice Agent Call">
+              <i data-lucide="bot" class="w-3 h-3"></i> AI Call
+            </button>
             <a href="https://wa.me/${cleanDigits}" target="_blank" class="text-emerald-600 hover:text-emerald-700 p-0.5" title="Open WhatsApp">
               <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
             </a>
-            <a href="tel:${escapeHtml(lead.phone)}" class="text-indigo-600 hover:text-indigo-700 p-0.5" title="Call">
+            <a href="tel:${escapeHtml(lead.phone)}" class="text-slate-400 hover:text-slate-600 p-0.5" title="Call">
               <i data-lucide="phone" class="w-3.5 h-3.5"></i>
             </a>
           </div>
@@ -1107,6 +1113,30 @@
       }
     }
 
+    async function triggerAiCall(leadId, leadName) {
+      if (!confirm(`Launch Talkar Voice AI call to ${leadName || 'prospect'} now?`)) return;
+      showToast(`Initiating Voice AI call to ${leadName || 'prospect'}...`, 'info');
+      try {
+        const res = await fetch(`/api/companies/${activeSlug}/leads/${leadId}/ai-call`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`🚀 Call dispatched to ${leadName || 'prospect'}! Agent Aditya is dialing.`, 'success');
+        } else {
+          showToast(`Call failed: ${data.error || 'Server error'}`, 'error');
+        }
+      } catch (err) {
+        showToast('Error triggering AI call: ' + err.message, 'error');
+      }
+    }
+
+    async function triggerModalAiCall() {
+      if (!activeLeadData) return;
+      await triggerAiCall(activeLeadData.id, activeLeadData.name);
+    }
+
     function openNewLeadModal() {
       document.getElementById('newLeadModal').classList.remove('hidden');
     }
@@ -1278,7 +1308,35 @@
         .replace(/'/g, '&#039;');
     }
 
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) {
+        alert(message);
+        return;
+      }
+      const toast = document.createElement('div');
+      const bgColors = {
+        success: 'bg-emerald-900/95 text-emerald-100 border-emerald-700',
+        error: 'bg-rose-900/95 text-rose-100 border-rose-700',
+        info: 'bg-slate-900/95 text-indigo-100 border-indigo-700',
+      };
+      const colorCls = bgColors[type] || bgColors.info;
+      toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl border text-xs shadow-xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2 ${colorCls}`;
+      toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
     window.onload = init;
   </script>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 </body>
 </html>

@@ -148,3 +148,14 @@ leadsRouter.patch('/:id/stage', async (req: Request, res: Response) => {
     res.status(400).json({ success: false, error: err.message });
   }
 });
+
+// POST /api/companies/:slug/leads/:id/ai-call - Trigger Talkar Voice AI call to lead
+leadsRouter.post('/:id/ai-call', async (req: Request, res: Response) => {
+  try {
+    const { slug, id } = req.params;
+    const result = await salesService.triggerAiCall(slug, id);
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});

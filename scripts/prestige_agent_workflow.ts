@@ -8,6 +8,9 @@ const wf = new Workflow({
 const global_node = wf.addTyped(globalNode({
     prompt: `# CONTEXT & TELEPHONY
 Today is {{current_weekday_Asia/Kolkata}}, {{current_time_Asia/Kolkata}} in year 2026.
+Prospect Name: {{customer_name | fallback:Valued Customer}}.
+Prospect Budget: {{budget | fallback:Unspecified}}.
+Prospect Need: {{need | fallback:Luxury residences & villas}}.
 Caller Phone: {{called_number}}.
 Sales Desk Direct Line: {{caller_number}}.
 If {{called_number}} is present, use it for WhatsApp dispatches, appointment bookings, and callbacks. If empty (e.g. web call), ask the customer for their 10-digit mobile number.
@@ -41,7 +44,7 @@ You are Aditya, Senior Sales Advisor & Estates Concierge for Prestige Group Luxu
 
 const start = wf.addTyped(startCall({
     name: "Start",
-    greeting: "Namaste! This is Aditya calling from Prestige Group Luxury Estates. I'm reaching out regarding your inquiry for our luxury residences and villas in Bangalore — did I catch you at a good time for a quick 2-minute chat?",
+    greeting: "Namaste {{customer_name | fallback:Ji}}! This is Aditya calling from Prestige Group Luxury Estates. I'm reaching out regarding your inquiry for our luxury residences and villas in Bangalore — did I catch you at a good time for a quick 2-minute chat?",
     prompt: `# GOAL
 The opening sales outreach greeting has already been delivered to the customer.
 On the customer's response:
@@ -56,7 +59,8 @@ Do NOT speak any extra words here. Your sole action is to transition.`,
 const sales_desk = wf.addTyped(agentNode({
     name: "Sales Desk",
     prompt: `# GOAL
-Engage prospective homebuyers warmly, understand their requirements (configuration, budget, timeline), present matched luxury residences, offer complimentary VIP cab site visits, and share floor plans/brochures on WhatsApp.
+Engage prospective homebuyer {{customer_name | fallback:}} warmly, understand their requirements (configuration, budget, timeline), present matched luxury residences, offer complimentary VIP cab site visits, and share floor plans/brochures on WhatsApp.
+If the customer has a specified budget ({{budget | fallback:}}) or requirement ({{need | fallback:}}), acknowledge it naturally early in the discussion.
 
 # WORKFLOWS
 

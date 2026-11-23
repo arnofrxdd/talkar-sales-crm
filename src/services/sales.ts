@@ -487,6 +487,110 @@ export class SalesService {
       appointment,
     };
   }
+
+  /**
+   * Trigger an outbound AI voice call to a lead via Talkar MCP / API
+   */
+  async triggerAiCall(companySlug: string, leadId: string) {
+    const company = await prisma.company.findUnique({
+      where: { slug: companySlug },
+    });
+    if (!company) {
+      throw new Error(`Company with slug "${companySlug}" not found`);
+    }
+
+    const lead = await prisma.lead.findUnique({
+      where: { id: leadId },
+    });
+    if (!lead) {
+      throw new Error(`Lead "${leadId}" not found`);
+    }
+
+    const cleanPhone = sanitizePhone(lead.phone);
+    const apiKey = process.env.TALKAR_API_KEY || 'dgr_mhbjuBQqjlZS1AWJ12_SjWd9d_YmmOvGYJtSwQ_UCtY';
+    const workflowId = 125; // Default for Prestige Luxury Estates
+    const fromPhoneNumberId = 14; // Default outbound DID (+918031453020)
+
+    const payload = {
+      jsonrpc: '2.0',
+      id: Date.now(),
+      method: 'tools/call',
+      params: {
+        name: 'initiate_call',
+        arguments: {
+          workflow_id: workflowId,
+          phone_number: cleanPhone,
+          from_phone_number_id: fromPhoneNumberId,
+          initial_context: {
+            customer_name: lead.name,
+            name: lead.name,
+            budget: lead.budget || '',
+            need: lead.need || lead.notes || '',
+          },
+        },
+      },
+    };
+
+    const resp = await fetch('https://talkar.in/api/v1/mcp/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/event-stream',
+        'X-API-Key': apiKey,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const rawText = await resp.text();
+    let callResult: any = null;
+    const lines = rawText.split('\n');
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        try {
+          const parsed = JSON.parse(line.slice(6));
+          if (parsed.result && parsed.result.content && parsed.result.content[0]) {
+            callResult = JSON.parse(parsed.result.content[0].text);
+          } else if (parsed.error) {
+            throw new Error(parsed.error.message || JSON.stringify(parsed.error));
+          }
+        } catch (e: any) {
+          if (!callResult) callResult = { raw: line };
+        }
+      }
+    }
+
+    if (!callResult) {
+      try {
+        const directJson = JSON.parse(rawText);
+        if (directJson.result?.content?.[0]?.text) {
+          callResult = JSON.parse(directJson.result.content[0].text);
+        } else {
+          callResult = directJson;
+        }
+      } catch (e) {
+        callResult = { raw: rawText };
+      }
+    }
+
+    eventService.broadcast(
+      'ai_call_dispatched',
+      {
+        companySlug,
+        leadId: lead.id,
+        leadName: lead.name,
+        phone: cleanPhone,
+        callResult,
+      },
+      companySlug
+    );
+
+    return {
+      success: true,
+      message: `Outbound AI call dispatched to ${lead.name}`,
+      lead,
+      callResult,
+    };
+  }
 }
 
 export const salesService = new SalesService();
