@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talkar Sales CRM — Universal Autonomous Voice AI Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#F0FDF4',
+              100: '#DCFCE7',
+              500: '#22C55E',
+              600: '#16A34A',
+              700: '#15803D',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F1F5F9;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(51, 65, 85, 0.8);
+      border-radius: 9999px;
+    }
+    .pulse-new {
+      animation: neonGlow 2.5s ease-out;
+    }
+    @keyframes neonGlow {
+      0% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.8); border-color: #22C55E; }
+      100% { box-shadow: none; border-color: rgba(51, 65, 85, 0.6); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex bg-[#0B0F19] font-sans text-xs text-slate-200 antialiased overflow-hidden">
+
+  <!-- ========================================================================= -->
+  <!-- SIDEBAR                                                                   -->
+  <!-- ========================================================================= -->
+  <aside class="w-64 bg-[#0F172A] border-r border-slate-800/80 flex flex-col shrink-0 min-h-screen sticky top-0 h-screen z-40 select-none">
+    
+    <!-- Brand Header -->
+    <div class="p-4 border-b border-slate-800">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 text-white flex items-center justify-center shadow-lg shadow-emerald-950/40">
+          <i data-lucide="phone-call" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-extrabold text-sm text-white tracking-tight leading-none">Talkar CRM</h1>
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Voice AI</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-normal">Universal Sales Pipeline</span>
+        </div>
+      </div>
+
+      <!-- Company Switcher -->
+      <div class="mt-4">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-[11px] font-semibold text-slate-400 tracking-wide uppercase">Active Account</label>
+          <button onclick="openNewCompanyModal()" class="text-[11px] font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>New Client</span>
+          </button>
+        </div>
+        <div class="relative">
+          <select id="companySelect" onchange="switchCompany(this.value)" class="w-full bg-slate-900/90 hover:bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 cursor-pointer appearance-none pr-8 transition-colors">
+            <option value="" disabled>Loading accounts...</option>
+          </select>
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Chameleon Noun Card -->
+      <div id="industryMetaCard" class="mt-3.5 p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-[11px]">
+        <div class="flex items-center gap-2 text-emerald-400 font-semibold mb-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span id="industryBadge">Real Estate</span>
+        </div>
+        <div class="text-slate-400 leading-snug">
+          <div><span class="text-slate-500">Products:</span> <span id="offeringNounBadge" class="text-slate-300 font-medium">Villas & Units</span></div>
+          <div><span class="text-slate-500">Bookings:</span> <span id="appointmentNounBadge" class="text-slate-300 font-medium">Site Visits</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
+      <button onclick="switchView('kanban')" id="nav-kanban" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 transition-all text-left">
+        <i data-lucide="kanban" class="w-4 h-4"></i>
+        <span>Live Kanban Pipeline</span>
+      </button>
+
+      <button onclick="switchView('catalog')" id="nav-catalog" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left">
+        <i data-lucide="package" class="w-4 h-4"></i>
+        <span>Catalog & Offerings</span>
+      </button>
+
+      <button onclick="switchView('appointments')" id="nav-appointments" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left">
+        <i data-lucide="calendar-check" class="w-4 h-4"></i>
+        <span>Booked Appointments</span>
+      </button>
+
+      <button onclick="switchView('campaigns')" id="nav-campaigns" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left">
+        <i data-lucide="send" class="w-4 h-4"></i>
+        <span>Outbound Campaigns</span>
+      </button>
+
+      <div class="pt-4 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Architecture</div>
+      <div class="px-3 py-2 text-[11px] text-slate-400 space-y-1 bg-slate-900/40 rounded-xl border border-slate-800/50">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Port</span>
+          <span class="font-mono text-emerald-400">7576</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Domain</span>
+          <span class="font-mono text-slate-300">salescrm.talkar.in</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">WhatsApp Engine</span>
+          <span class="text-purple-400 font-medium">n8n Webhook</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Footer Live SSE Stream Indicator -->
+    <div class="p-3 border-t border-slate-800 bg-slate-950/40">
+      <div class="flex items-center justify-between text-[11px]">
+        <div class="flex items-center gap-2">
+          <div class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </div>
+          <span class="font-medium text-slate-300" id="sseStatusText">SSE Stream Live</span>
+        </div>
+        <span class="font-mono text-[10px] text-slate-500">0ms latency</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN WORKSPACE                                                            -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden">
+    
+    <!-- Top Action & Metrics Bar -->
+    <header class="h-16 border-b border-slate-800/80 px-6 flex items-center justify-between bg-[#0F172A]/70 backdrop-blur shrink-0">
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 id="pageTitle" class="text-base font-bold text-white tracking-tight">Live Sales Pipeline</h2>
+          <span id="activeCompanyBadge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">Prestige Group</span>
+        </div>
+        <p class="text-[11px] text-slate-400">Real-time AI voice call qualification, BANT scoring, and appointment booking.</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Metric Cards -->
+        <div class="flex items-center gap-3">
+          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center">
+              <i data-lucide="flame" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 uppercase font-semibold">Hot Leads</div>
+              <div id="statHot" class="font-bold text-sm text-white">0</div>
+            </div>
+          </div>
+
+          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+              <i data-lucide="calendar" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 uppercase font-semibold">Booked</div>
+              <div id="statBooked" class="font-bold text-sm text-white">0</div>
+            </div>
+          </div>
+
+          <div class="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+              <i data-lucide="phone-forwarded" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 uppercase font-semibold">Callbacks</div>
+              <div id="statCallbacks" class="font-bold text-sm text-white">0</div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="openNewLeadModal()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-emerald-950/50">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>Add Lead</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Content Workspace -->
+    <div class="flex-1 overflow-hidden p-6">
+      
+      <!-- VIEW 1: KANBAN BOARD -->
+      <div id="view-kanban" class="h-full flex gap-5 overflow-x-auto pb-4 custom-scrollbar">
+        
+        <!-- Column 1: NEW INQUIRIES -->
+        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+              <span class="font-bold text-xs uppercase tracking-wide text-slate-200">New Inquiries</span>
+            </div>
+            <span id="badge-count-NEW" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800 text-slate-300">0</span>
+          </div>
+          <div id="col-NEW" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar">
+            <!-- Cards populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Column 2: QUALIFIED / CONTACTED -->
+        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+              <span class="font-bold text-xs uppercase tracking-wide text-slate-200">AI Qualified / BANT</span>
+            </div>
+            <span id="badge-count-QUALIFIED" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/10 text-blue-400">0</span>
+          </div>
+          <div id="col-QUALIFIED" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+        </div>
+
+        <!-- Column 3: APPOINTMENT BOOKED -->
+        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-emerald-500/30 shadow-xl shadow-emerald-950/20 overflow-hidden">
+          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-emerald-950/30">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="colHeaderAppointment" class="font-bold text-xs uppercase tracking-wide text-emerald-300">Site Visit / Demo Booked</span>
+            </div>
+            <span id="badge-count-APPOINTMENT_BOOKED" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-400">0</span>
+          </div>
+          <div id="col-APPOINTMENT_BOOKED" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+        </div>
+
+        <!-- Column 4: WON / CONVERTED -->
+        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span>
+              <span class="font-bold text-xs uppercase tracking-wide text-slate-200">Won & Closed</span>
+            </div>
+            <span id="badge-count-WON" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-500/10 text-teal-400">0</span>
+          </div>
+          <div id="col-WON" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+        </div>
+
+        <!-- Column 5: COLD / LOST -->
+        <div class="w-80 shrink-0 flex flex-col bg-[#0F172A]/90 rounded-2xl border border-slate-800/80 shadow-xl overflow-hidden">
+          <div class="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-600"></span>
+              <span class="font-bold text-xs uppercase tracking-wide text-slate-400">Cold / Disqualified</span>
+            </div>
+            <span id="badge-count-LOST" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800 text-slate-400">0</span>
+          </div>
+          <div id="col-LOST" class="flex-1 p-3 space-y-3 overflow-y-auto custom-scrollbar"></div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: CATALOG & OFFERINGS -->
+      <div id="view-catalog" class="hidden h-full overflow-y-auto custom-scrollbar">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-white">Product Catalog & Offerings</h3>
+            <p class="text-[11px] text-slate-400">Available units, treatments, or tiers queried live by Voice AI agents.</p>
+          </div>
+          <button onclick="openNewOfferingModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-1.5 transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Add Item</span>
+          </button>
+        </div>
+        <div id="catalogGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- VIEW 3: APPOINTMENTS LIST -->
+      <div id="view-appointments" class="hidden h-full overflow-y-auto custom-scrollbar">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-bold text-white">Scheduled Appointments</h3>
+            <p class="text-[11px] text-slate-400">All upcoming site visits, live demos, and OPD sessions booked by Voice Agents.</p>
+          </div>
+        </div>
+        <div class="bg-[#0F172A] rounded-2xl border border-slate-800 overflow-hidden">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 uppercase text-[10px] font-semibold">
+              <tr>
+                <th class="p-3.5">Reference</th>
+                <th class="p-3.5">Prospect</th>
+                <th class="p-3.5">Type</th>
+                <th class="p-3.5">Date & Slot</th>
+                <th class="p-3.5">Status</th>
+                <th class="p-3.5">Notes</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsTableBody" class="divide-y divide-slate-800/60">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIEW 4: CAMPAIGNS -->
+      <div id="view-campaigns" class="hidden h-full overflow-y-auto custom-scrollbar">
+        <div class="max-w-3xl mx-auto bg-[#0F172A] p-6 rounded-2xl border border-slate-800">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center">
+              <i data-lucide="megaphone" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-white">Bulk Outbound Sales Campaign</h3>
+              <p class="text-[11px] text-slate-400">Upload CSV of 500+ leads and let Talkar Voice AI call and qualify them autonomously.</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="border-2 border-dashed border-slate-700/80 rounded-2xl p-8 text-center bg-slate-900/40 hover:bg-slate-900/70 transition-colors cursor-pointer">
+              <i data-lucide="file-up" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
+              <div class="font-semibold text-white">Click to upload leads CSV</div>
+              <div class="text-[11px] text-slate-500 mt-1">Columns: phone_number, name, category, budget</div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs space-y-2">
+              <div class="font-semibold text-slate-300">Campaign Execution Architecture</div>
+              <p class="text-slate-400 text-[11px]">
+                When triggered, Talkar Voice AI calls prospects during business hours. Each finished call triggers the webhook to <code class="text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded font-mono">/api/webhooks/call-completed</code>, immediately pushing the card to the Kanban board above via Server-Sent Events.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: LEAD DETAIL / AUDIO PLAYER                                         -->
+  <!-- ========================================================================= -->
+  <div id="leadModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#0F172A] border border-slate-800 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+        <div class="flex items-center gap-2.5">
+          <div id="modalLeadAvatar" class="w-8 h-8 rounded-full bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xs">VM</div>
+          <div>
+            <h3 id="modalLeadName" class="font-bold text-sm text-white">Vikram Malhotra</h3>
+            <span id="modalLeadPhone" class="text-[11px] text-slate-400 font-mono">+91 98279 53551</span>
+          </div>
+        </div>
+        <button onclick="closeLeadModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs">
+        <!-- BANT Scorecard -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-[10px] text-slate-500 uppercase font-bold">Temperature</span>
+            <div id="modalLeadTemp" class="mt-1 font-bold text-red-400 flex items-center gap-1.5">
+              <i data-lucide="flame" class="w-4 h-4"></i> HOT LEAD
+            </div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-[10px] text-slate-500 uppercase font-bold">Budget & Timeline</span>
+            <div id="modalLeadBudget" class="mt-1 font-semibold text-slate-200">1.8 - 2.0 Cr • 60 Days</div>
+          </div>
+        </div>
+
+        <!-- AI Call Summary -->
+        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
+          <div class="flex items-center gap-1.5 text-emerald-400 font-semibold mb-1.5">
+            <i data-lucide="bot" class="w-3.5 h-3.5"></i>
+            <span>Voice AI Call Summary</span>
+          </div>
+          <p id="modalLeadSummary" class="text-slate-300 leading-relaxed text-[11px]">
+            Spoke for 4 mins on Voice AI. Loved the Garden Villa pricing. Booked Saturday morning site visit with complimentary cab pickup.
+          </p>
+        </div>
+
+        <!-- Audio Recording Player -->
+        <div id="modalAudioSection" class="p-3 rounded-xl bg-slate-900/40 border border-slate-800">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-semibold text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="volume-2" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Call Recording</span>
+            </span>
+            <span id="modalCallRunId" class="text-[10px] font-mono text-slate-500">WR-89102</span>
+          </div>
+          <audio id="modalAudioPlayer" controls class="w-full h-8 outline-none"></audio>
+        </div>
+
+        <!-- Appointment Details -->
+        <div id="modalAppointmentSection" class="p-3.5 rounded-xl bg-emerald-950/20 border border-emerald-500/20">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+              <i data-lucide="calendar-check" class="w-4 h-4"></i>
+              <span id="modalAppointmentType">Site Visit Scheduled</span>
+            </span>
+            <span id="modalAppointmentRef" class="font-mono text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20">VISIT-4821</span>
+          </div>
+          <div id="modalAppointmentTime" class="text-slate-200 font-medium">Saturday, Nov 28, 2026 at 11:30 AM</div>
+          <div id="modalAppointmentNotes" class="text-slate-400 text-[11px] mt-1">Guest requested Indiranagar cab pickup.</div>
+        </div>
+
+        <!-- Callback Action -->
+        <div class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+            <i data-lucide="phone-outgoing" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span>Schedule Human Callback</span>
+          </div>
+          <div class="flex gap-2">
+            <input type="datetime-local" id="manualCallbackTime" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white">
+            <button onclick="submitManualCallback()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg font-semibold transition-colors">
+              Set Callback
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: ADD NEW CLIENT COMPANY (5-Minute Onboarding)                       -->
+  <!-- ========================================================================= -->
+  <div id="newCompanyModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#0F172A] border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-sm text-white">Onboard New Client (5-Min Setup)</h3>
+        <button onclick="closeNewCompanyModal()" class="text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleCreateCompany(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 font-medium mb-1">Company Name</label>
+          <input type="text" id="newCompanyName" required placeholder="e.g. Sobha Developers" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Unique Slug</label>
+            <input type="text" id="newCompanySlug" required placeholder="sobha-devs" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-400 font-medium mb-1">Industry</label>
+            <select id="newCompanyIndustry" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+              <option value="REAL_ESTATE">Real Estate</option>
+              <option value="HEALTHCARE_CLINIC">Healthcare / Clinic</option>
+              <option value="B2B_SAAS">B2B SaaS</option>
+              <option value="AUTOMOBILE">Automobile Dealership</option>
+              <option value="EDUCATION_COACHING">Education / Coaching</option>
+              <option value="GENERIC_SALES">Generic Sales</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-400 font-medium mb-1">City / Location</label>
+          <input type="text" id="newCompanyCity" placeholder="Bangalore, Mumbai, Delhi..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white">
+        </div>
+        <button type="submit" class="w-full mt-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors">
+          Create & Switch Account
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT APP CONTROLLER                                                 -->
+  <!-- ========================================================================= -->
+  <script>
+    let activeSlug = 'prestige-group';
+    let currentCompany = null;
+    let sseSource = null;
+    let activeLeadData = null;
+
+    // Check if URL has slug (e.g. /clove-dental)
+    const pathSlug = window.location.pathname.replace(/^\//, '').split('/')[0];
+    if (pathSlug && pathSlug !== 'dashboard') {
+      activeSlug = pathSlug;
+    }
+
+    async function init() {
+      lucide.createIcons();
+      await loadCompanies();
+      await loadCompanyDetails(activeSlug);
+      connectSSE(activeSlug);
+    }
+
+    async function loadCompanies() {
+      try {
+        const res = await fetch('/api/companies');
+        const data = await res.json();
+        const select = document.getElementById('companySelect');
+        select.innerHTML = '';
+
+        if (data.companies && data.companies.length > 0) {
+          data.companies.forEach((c) => {
+            const opt = document.createElement('option');
+            opt.value = c.slug;
+            opt.textContent = `${c.name} (${c.industry.replace('_', ' ')})`;
+            if (c.slug === activeSlug) opt.selected = true;
+            select.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load companies:', err);
+      }
+    }
+
+    async function switchCompany(slug) {
+      activeSlug = slug;
+      window.history.pushState({}, '', `/${slug}`);
+      await loadCompanyDetails(slug);
+      connectSSE(slug);
+    }
+
+    async function loadCompanyDetails(slug) {
+      try {
+        const res = await fetch(`/api/companies/${slug}`);
+        const data = await res.json();
+        if (!data.company) return;
+        currentCompany = data.company;
+
+        // Update UI Badges
+        document.getElementById('activeCompanyBadge').textContent = currentCompany.name;
+        document.getElementById('industryBadge').textContent = currentCompany.industry.replace('_', ' ');
+        document.getElementById('offeringNounBadge').textContent = currentCompany.offeringNoun;
+        document.getElementById('appointmentNounBadge').textContent = currentCompany.appointmentNoun;
+        document.getElementById('colHeaderAppointment').textContent = `${currentCompany.appointmentNoun} Booked`;
+
+        await loadLeads(slug);
+        await loadOfferings(slug);
+        await loadAppointments(slug);
+      } catch (err) {
+        console.error('Error loading company details:', err);
+      }
+    }
+
+    async function loadLeads(slug) {
+      try {
+        const res = await fetch(`/api/companies/${slug}/leads`);
+        const data = await res.json();
+        renderKanban(data.leads || []);
+      } catch (err) {
+        console.error('Error loading leads:', err);
+      }
+    }
+
+    function renderKanban(leads) {
+      const stages = ['NEW', 'QUALIFIED', 'APPOINTMENT_BOOKED', 'WON', 'LOST'];
+      stages.forEach((stage) => {
+        const col = document.getElementById(`col-${stage}`);
+        if (col) col.innerHTML = '';
+        const countBadge = document.getElementById(`badge-count-${stage}`);
+        if (countBadge) countBadge.textContent = '0';
+      });
+
+      let hotCount = 0;
+      let bookedCount = 0;
+      let callbackCount = 0;
+
+      leads.forEach((lead) => {
+        if (lead.temperature === 'HOT') hotCount++;
+        if (lead.stage === 'APPOINTMENT_BOOKED') bookedCount++;
+        if (lead.callbackAt) callbackCount++;
+
+        const stage = lead.stage || 'NEW';
+        const col = document.getElementById(`col-${stage}`);
+        if (!col) return;
+
+        const card = createLeadCard(lead);
+        col.appendChild(card);
+      });
+
+      // Update Top Metrics
+      document.getElementById('statHot').textContent = hotCount;
+      document.getElementById('statBooked').textContent = bookedCount;
+      document.getElementById('statCallbacks').textContent = callbackCount;
+
+      stages.forEach((stage) => {
+        const col = document.getElementById(`col-${stage}`);
+        const countBadge = document.getElementById(`badge-count-${stage}`);
+        if (col && countBadge) {
+          countBadge.textContent = col.children.length;
+        }
+      });
+
+      lucide.createIcons();
+    }
+
+    function createLeadCard(lead) {
+      const div = document.createElement('div');
+      div.id = `lead-card-${lead.id}`;
+      div.className = 'p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all cursor-pointer shadow-md text-xs space-y-2.5';
+      div.onclick = () => openLeadModal(lead);
+
+      // Temperature styling
+      let tempBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">☀️ WARM</span>`;
+      if (lead.temperature === 'HOT') {
+        tempBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">🔥 HOT</span>`;
+      } else if (lead.temperature === 'COLD') {
+        tempBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">❄️ COLD</span>`;
+      }
+
+      const appointment = lead.appointments && lead.appointments.length > 0 ? lead.appointments[0] : null;
+
+      div.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div class="font-bold text-white text-xs tracking-tight">${escapeHtml(lead.name)}</div>
+          ${tempBadge}
+        </div>
+        <div class="font-mono text-[11px] text-slate-400 flex items-center gap-1">
+          <i data-lucide="phone" class="w-3 h-3 text-slate-500"></i>
+          <span>${escapeHtml(lead.phone)}</span>
+        </div>
+        ${lead.summary ? `<p class="text-slate-400 text-[11px] line-clamp-2 leading-relaxed bg-slate-950/40 p-2 rounded-lg">${escapeHtml(lead.summary)}</p>` : ''}
+        ${appointment ? `
+          <div class="p-2 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-[11px] text-emerald-300 flex items-center justify-between">
+            <span class="font-medium">📅 ${escapeHtml(appointment.date)} • ${escapeHtml(appointment.timeSlot)}</span>
+            <span class="font-mono text-[9px] text-emerald-400 font-bold">${escapeHtml(appointment.reference)}</span>
+          </div>
+        ` : ''}
+        ${lead.callbackAt ? `
+          <div class="text-[10px] text-amber-400 flex items-center gap-1 font-medium">
+            <i data-lucide="clock" class="w-3 h-3"></i>
+            <span>Callback queued: ${new Date(lead.callbackAt).toLocaleDateString()}</span>
+          </div>
+        ` : ''}
+      `;
+
+      return div;
+    }
+
+    async function loadOfferings(slug) {
+      try {
+        const res = await fetch(`/api/companies/${slug}/offerings`);
+        const data = await res.json();
+        const grid = document.getElementById('catalogGrid');
+        grid.innerHTML = '';
+
+        if (data.items && data.items.length > 0) {
+          data.items.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'p-4 rounded-2xl bg-[#0F172A] border border-slate-800 space-y-3';
+            card.innerHTML = `
+              <div class="flex items-start justify-between">
+                <div>
+                  <span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">${escapeHtml(item.code)}</span>
+                  <h4 class="font-bold text-sm text-white mt-1.5">${escapeHtml(item.title)}</h4>
+                </div>
+                <div class="text-right">
+                  <div class="font-bold text-emerald-400 text-sm">${escapeHtml(item.formattedPrice)}</div>
+                  <span class="text-[10px] text-slate-500">${escapeHtml(item.category)}</span>
+                </div>
+              </div>
+              <p class="text-slate-400 text-xs leading-relaxed">${escapeHtml(item.description || 'No description provided')}</p>
+              ${item.brochureUrl ? `
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                  <a href="${item.brochureUrl}" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1 text-[11px] font-semibold">
+                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                    <span>View Brochure PDF</span>
+                  </a>
+                  <span class="text-[10px] text-purple-400 font-mono">Dispatched via n8n</span>
+                </div>
+              ` : ''}
+            `;
+            grid.appendChild(card);
+          });
+          lucide.createIcons();
+        }
+      } catch (err) {
+        console.error('Error loading offerings:', err);
+      }
+    }
+
+    async function loadAppointments(slug) {
+      try {
+        const res = await fetch(`/api/companies/${slug}/appointments`);
+        const data = await res.json();
+        const tbody = document.getElementById('appointmentsTableBody');
+        tbody.innerHTML = '';
+
+        if (data.appointments && data.appointments.length > 0) {
+          data.appointments.forEach((apt) => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-900/50 transition-colors';
+            tr.innerHTML = `
+              <td class="p-3.5 font-mono text-emerald-400 font-bold">${escapeHtml(apt.reference)}</td>
+              <td class="p-3.5 font-semibold text-white">${escapeHtml(apt.lead ? apt.lead.name : 'Unknown')}<div class="text-[10px] text-slate-500 font-mono">${escapeHtml(apt.lead ? apt.lead.phone : '')}</div></td>
+              <td class="p-3.5 text-slate-300">${escapeHtml(apt.type)}</td>
+              <td class="p-3.5 text-slate-200 font-medium">${escapeHtml(apt.date)} at ${escapeHtml(apt.timeSlot)}</td>
+              <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${escapeHtml(apt.status)}</span></td>
+              <td class="p-3.5 text-slate-400 text-[11px]">${escapeHtml(apt.notes || '—')}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (err) {
+        console.error('Error loading appointments:', err);
+      }
+    }
+
+    // Connect to Server-Sent Events Live Stream
+    function connectSSE(slug) {
+      if (sseSource) sseSource.close();
+
+      sseSource = new EventSource(`/api/events/leads?company=${slug}`);
+
+      sseSource.addEventListener('connected', () => {
+        document.getElementById('sseStatusText').textContent = 'SSE Stream Live';
+      });
+
+      sseSource.addEventListener('lead_updated', (e) => {
+        console.log('⚡ SSE Lead Updated:', e.data);
+        loadLeads(activeSlug);
+      });
+
+      sseSource.addEventListener('call_completed', (e) => {
+        console.log('⚡ SSE Call Completed:', e.data);
+        loadLeads(activeSlug);
+        loadAppointments(activeSlug);
+      });
+
+      sseSource.onerror = () => {
+        document.getElementById('sseStatusText').textContent = 'Reconnecting...';
+      };
+    }
+
+    function switchView(viewName) {
+      ['kanban', 'catalog', 'appointments', 'campaigns'].forEach((v) => {
+        const el = document.getElementById(`view-${v}`);
+        const nav = document.getElementById(`nav-${v}`);
+        if (el && nav) {
+          if (v === viewName) {
+            el.classList.remove('hidden');
+            nav.className = 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 transition-all text-left';
+          } else {
+            el.classList.add('hidden');
+            nav.className = 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all text-left';
+          }
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function openLeadModal(lead) {
+      activeLeadData = lead;
+      document.getElementById('modalLeadName').textContent = lead.name;
+      document.getElementById('modalLeadPhone').textContent = lead.phone;
+      document.getElementById('modalLeadAvatar').textContent = lead.name.slice(0, 2).toUpperCase();
+      document.getElementById('modalLeadTemp').innerHTML = `<i data-lucide="flame" class="w-4 h-4"></i> ${lead.temperature} LEAD`;
+      document.getElementById('modalLeadBudget').textContent = `${lead.budget || 'Budget unstated'} • ${lead.timeline || 'Immediate'}`;
+      document.getElementById('modalLeadSummary').textContent = lead.summary || 'No call summary recorded yet.';
+
+      const audioSec = document.getElementById('modalAudioSection');
+      const audioPlayer = document.getElementById('modalAudioPlayer');
+      if (lead.recordingUrl) {
+        audioSec.classList.remove('hidden');
+        audioPlayer.src = lead.recordingUrl;
+        document.getElementById('modalCallRunId').textContent = lead.callRunId || 'WR-DEMO';
+      } else {
+        audioSec.classList.add('hidden');
+      }
+
+      const aptSec = document.getElementById('modalAppointmentSection');
+      if (lead.appointments && lead.appointments.length > 0) {
+        const apt = lead.appointments[0];
+        aptSec.classList.remove('hidden');
+        document.getElementById('modalAppointmentType').textContent = apt.type;
+        document.getElementById('modalAppointmentRef').textContent = apt.reference;
+        document.getElementById('modalAppointmentTime').textContent = `${apt.date} at ${apt.timeSlot}`;
+        document.getElementById('modalAppointmentNotes').textContent = apt.notes || 'No special requests.';
+      } else {
+        aptSec.classList.add('hidden');
+      }
+
+      document.getElementById('leadModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeLeadModal() {
+      const audioPlayer = document.getElementById('modalAudioPlayer');
+      if (audioPlayer) audioPlayer.pause();
+      document.getElementById('leadModal').classList.add('hidden');
+    }
+
+    function openNewCompanyModal() {
+      document.getElementById('newCompanyModal').classList.remove('hidden');
+    }
+
+    function closeNewCompanyModal() {
+      document.getElementById('newCompanyModal').classList.add('hidden');
+    }
+
+    async function handleCreateCompany(e) {
+      e.preventDefault();
+      const name = document.getElementById('newCompanyName').value;
+      const slug = document.getElementById('newCompanySlug').value;
+      const industry = document.getElementById('newCompanyIndustry').value;
+      const city = document.getElementById('newCompanyCity').value;
+
+      try {
+        const res = await fetch('/api/companies', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, slug, industry, city }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeNewCompanyModal();
+          await loadCompanies();
+          switchCompany(data.company.slug);
+        }
+      } catch (err) {
+        alert('Failed to create company: ' + err.message);
+      }
+    }
+
+    async function submitManualCallback() {
+      if (!activeLeadData) return;
+      const time = document.getElementById('manualCallbackTime').value;
+      if (!time) {
+        alert('Please choose a callback time');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/companies/${activeSlug}/appointments/callbacks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lead_phone: activeLeadData.phone,
+            lead_name: activeLeadData.name,
+            callback_time: new Date(time).toISOString(),
+            reason: 'Queued from Sales CRM Dashboard',
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('Callback scheduled successfully!');
+          closeLeadModal();
+          loadLeads(activeSlug);
+        }
+      } catch (err) {
+        alert('Callback schedule failed: ' + err.message);
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

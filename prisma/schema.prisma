@@ -1,0 +1,125 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Company {
+  id              String        @id @default(uuid())
+  slug            String        @unique // e.g. "prestige-group", "clove-dental", "gurug-saas"
+  name            String
+  brand           String?
+  industry        String        @default("GENERIC_SALES") // "REAL_ESTATE", "HEALTHCARE_CLINIC", "B2B_SAAS", "AUTOMOBILE", "EDUCATION_COACHING", "LEGAL_FINANCE", "GENERIC_SALES"
+  tagline         String?
+  description     String?
+  
+  phone           String?
+  email           String?
+  website         String?
+  address         String?
+  city            String?
+  currency        String        @default("INR")
+  timezone        String        @default("Asia/Kolkata")
+  
+  // Dynamic Industry Terminology Mapping
+  offeringNoun    String        @default("Product") // e.g. "Unit / Configuration", "Treatment", "SaaS Tier"
+  appointmentNoun String        @default("Appointment") // e.g. "Site Visit", "Doctor Consultation", "Live Screen Demo"
+  
+  offerings       Offering[]
+  leads           Lead[]
+  appointments    Appointment[]
+  
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([slug])
+}
+
+model Offering {
+  id          String   @id @default(uuid())
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  code        String   // e.g. "PRESTIGE-3BHK-LUX", "CLOVE-IMPLANT", "GURUG-ENTERPRISE"
+  title       String   // e.g. "3BHK Luxury Garden Villa", "German Titanium Single Dental Implant"
+  category    String   // e.g. "3BHK", "Dental Surgery", "Enterprise SaaS"
+  description String?
+  price       Float
+  currency    String   @default("INR")
+  
+  specs       String?  // JSON string e.g. {"sqft": 2450, "facing": "East", "possession": "Dec 2026"}
+  photos      String   @default("[]") // JSON string of images
+  brochureUrl String?  // Direct PDF or link
+  
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([companyId, code])
+  @@index([companyId])
+}
+
+model Lead {
+  id             String          @id @default(uuid())
+  companyId      String
+  company        Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  name           String
+  phone          String
+  email          String?
+  city           String?
+  
+  temperature    String          @default("WARM") // "HOT", "WARM", "COLD"
+  stage          String          @default("NEW")  // "NEW", "QUALIFIED", "APPOINTMENT_BOOKED", "WON", "LOST"
+  
+  budget         String?
+  timeline       String?
+  need           String?
+  authority      String?
+  
+  source         String          @default("VOICE_AI") // "VOICE_AI", "WEBSITE", "CAMPAIGN", "MANUAL"
+  callRunId      String?
+  recordingUrl   String?
+  summary        String?
+  notes          String?
+  
+  callbackAt     DateTime?
+  callbackReason String?
+  
+  appointments   Appointment[]
+  
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([companyId, phone])
+  @@index([temperature])
+  @@index([stage])
+}
+
+model Appointment {
+  id           String      @id @default(uuid())
+  companyId    String
+  company      Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  leadId       String
+  lead         Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  reference    String      @unique // e.g. "VISIT-4821", "DEMO-9102", "OPD-3184"
+  type         String      // "Site Visit", "15-Min Live Screen Demo", "Doctor OPD Consultation"
+  date         String      // "2026-11-28"
+  timeSlot     String      // "11:30 AM"
+  status       String      @default("SCHEDULED") // "SCHEDULED", "COMPLETED", "RESCHEDULED", "CANCELLED", "NO_SHOW"
+  notes        String?
+  
+  source       String      @default("VOICE_AI")
+  callRunId    String?
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([companyId, date])
+  @@index([leadId])
+}

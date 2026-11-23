@@ -1,0 +1,23 @@
+salescrm.talkar.in {
+    # Reverse proxy to Talkar Sales CRM Docker Container on Port 7576
+    reverse_proxy 127.0.0.1:7576 {
+        # Crucial: Disable proxy buffering for real-time Server-Sent Events (SSE)
+        flush_interval -1
+    }
+
+    # Enable compression for static assets and JSON responses
+    encode gzip zstd
+
+    # Security Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    log {
+        output file /var/log/caddy/salescrm.talkar.in.access.log
+        format console
+    }
+}

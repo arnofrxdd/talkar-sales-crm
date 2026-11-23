@@ -1,0 +1,29 @@
+services:
+  talkar-sales-crm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talkar-sales-crm
+    restart: always
+    ports:
+      # Exposes to unique port 7576 (customizable via SALES_PORT env var)
+      - "${SALES_PORT:-7576}:7576"
+    environment:
+      - NODE_ENV=production
+      - PORT=7576
+      - HOST=0.0.0.0
+      - DOMAIN=salescrm.talkar.in
+      - DATABASE_URL=file:/app/data/sales.db
+    volumes:
+      # Persistent SQLite volume for zero data loss across container updates
+      - talkar_sales_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:7576/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  talkar_sales_data:
+    name: talkar_sales_storage
