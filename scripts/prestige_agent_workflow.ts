@@ -41,13 +41,13 @@ You are Aditya, Senior Sales Advisor & Estates Concierge for Prestige Group Luxu
 
 const start = wf.addTyped(startCall({
     name: "Start",
-    greeting: "Namaste and welcome to Prestige Group Luxury Estates! I'm Aditya. How may I assist you with your home search or site visit today?",
+    greeting: "Namaste! This is Aditya calling from Prestige Group Luxury Estates. I'm reaching out regarding your inquiry for our luxury residences and villas in Bangalore — did I catch you at a good time for a quick 2-minute chat?",
     prompt: `# GOAL
-The opening greeting has already been delivered to the caller.
-On the caller's very first response:
-You MUST immediately call the tool begin_sales_desk to hand over to the Sales Desk.
-Do NOT speak any conversational words here. Your sole action is to call begin_sales_desk.
-(Only if the caller explicitly says wrong number, not interested, or hangs up, call exit_from_start).`,
+The opening sales outreach greeting has already been delivered to the customer.
+On the customer's response:
+- If they say yes, hello, go ahead, what is this, or ask about properties: immediately call begin_sales_desk to transition to the Sales Desk.
+- If they explicitly say wrong number, not interested, do not call, or hang up: call exit_from_start.
+Do NOT speak any extra words here. Your sole action is to transition.`,
     allow_interrupt: true,
     delayed_start: true,
     delayed_start_duration: 1.5,
