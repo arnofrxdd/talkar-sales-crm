@@ -723,3 +723,246 @@ wf.edge(sales_desk, end_call, {
 | **2. Live Voice Call** | 2 min | Client dials outbound or receives AI call | AI speaks in natural Hindi/English, answers catalog questions, quotes prices |
 | **3. WhatsApp Proof** | Immediate | AI triggers collateral & appointment tools | Client's phone buzzes with approved Meta WhatsApp brochure and appointment reference |
 | **4. CRM Closure** | Immediate | AI hangs up $\rightarrow$ post-call webhook fires | Client watches their own lead card turn **`🔥 HOT`** in the **Booked** column with full call recording and AI summary |
+
+---
+
+## 9. Production Database Management (Sales CRM & Hotel PMS)
+
+Both the **Sales CRM** and **Hotel PMS** are powered by SQLite engines through Prisma ORM.
+
+> ⚡ **No SSH or server access is required:** 100% of database inspection, record creation, data updates, and lead/booking cleanup can be executed directly via REST APIs from your local terminal or scripts.
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                     Production Database Management Architecture                        │
+├──────────────────────────────────────────┬─────────────────────────────────────────────┤
+│ Service                                  │ Production Base URL                         │
+├──────────────────────────────────────────┼─────────────────────────────────────────────┤
+│ Talkar Universal Sales CRM               │ https://salescrm.talkar.in                  │
+│ Talkar Hotel Property Management System  │ https://hotelpms.talkar.in                  │
+└──────────────────────────────────────────┴─────────────────────────────────────────────┘
+```
+
+---
+
+### Part A: Sales CRM Operations (`https://salescrm.talkar.in`)
+
+#### 1. Inspect & View Records
+```bash
+# View all leads and BANT stats for a company
+curl -s https://salescrm.talkar.in/api/companies/prestige-group/leads | jq .
+
+# View aggregate summary stats only
+curl -s https://salescrm.talkar.in/api/companies/prestige-group/leads | jq .stats
+
+# View all scheduled appointments
+curl -s https://salescrm.talkar.in/api/companies/prestige-group/appointments | jq .
+
+# View product catalog / offerings
+curl -s https://salescrm.talkar.in/api/companies/prestige-group/offerings | jq .
+
+# View company profile & configuration
+curl -s https://salescrm.talkar.in/api/companies/prestige-group | jq .
+```
+
+#### 2. Clean / Delete a Lead (Cascades Appointments)
+Deleting a lead automatically deletes all associated appointments in SQLite.
+```bash
+# Delete lead by UUID
+curl -X DELETE https://salescrm.talkar.in/api/companies/prestige-group/leads/<LEAD_ID>
+```
+
+#### 3. One-Liner: Find & Delete Lead by Phone Number
+```bash
+PHONE="+919827953551"
+LEAD_ID=$(curl -s https://salescrm.talkar.in/api/companies/prestige-group/leads | jq -r --arg p "$PHONE" '.leads[] | select(.phone == $p) | .id')
+
+if [ -n "$LEAD_ID" ] && [ "$LEAD_ID" != "null" ]; then
+  curl -s -X DELETE https://salescrm.talkar.in/api/companies/prestige-group/leads/$LEAD_ID | jq .
+  echo "✅ Deleted lead $LEAD_ID ($PHONE)"
+else
+  echo "ℹ️ No lead found for $PHONE"
+fi
+```
+
+#### 4. Add / Seed a Lead Manually
+```bash
+curl -X POST https://salescrm.talkar.in/api/companies/prestige-group/leads \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Vikram Malhotra",
+    "phone": "+919876543210",
+    "email": "vikram.m@example.com",
+    "temperature": "HOT",
+    "stage": "QUALIFIED",
+    "budget": "2 Crore Rupees",
+    "timeline": "30 days",
+    "notes": "Looking for 3BHK duplex villa with east-facing garden"
+  }' | jq .
+```
+
+#### 5. Add / Book an Appointment Manually
+```bash
+curl -X POST https://salescrm.talkar.in/api/companies/prestige-group/appointments \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lead_name": "Vikram Malhotra",
+    "lead_phone": "+919876543210",
+    "slot_date": "2026-11-29",
+    "slot_time": "03:00 PM",
+    "appointment_type": "SITE_VISIT",
+    "notes": "Pickup from Indiranagar, Bangalore"
+  }' | jq .
+```
+
+#### 6. Update Lead Stage & Temperature (Kanban Movement)
+Move a lead between Kanban columns (`NEW`, `QUALIFIED`, `APPOINTMENT_BOOKED`, `WON`, `LOST`):
+```bash
+curl -X PATCH https://salescrm.talkar.in/api/companies/prestige-group/leads/<LEAD_ID>/stage \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stage": "APPOINTMENT_BOOKED",
+    "temperature": "HOT"
+  }' | jq .
+```
+
+#### 7. Add an Offering / Product to Catalog
+```bash
+curl -X POST https://salescrm.talkar.in/api/companies/prestige-group/offerings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "PRESTIGE-5BHK-PALACE",
+    "title": "5BHK Signature Palace Villa",
+    "category": "Villa",
+    "price": 45000000,
+    "description": "6,500 sq.ft private estate with infinity pool and private helipad",
+    "brochureUrl": "https://salescrm.talkar.in/brochures/palace-villa.pdf"
+  }' | jq .
+```
+
+---
+
+### Part B: Hotel PMS Operations (`https://hotelpms.talkar.in`)
+
+#### 1. Inspect & View Records
+```bash
+# View all configured hotel properties
+curl -s https://hotelpms.talkar.in/api/hotels | jq .
+
+# View all bookings for a hotel
+curl -s https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings | jq .
+
+# Lookup a specific reservation by Booking Reference or Phone
+curl -s https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings/BER-4029 | jq .
+curl -s https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings/+491701234567 | jq .
+
+# Check live date availability & pricing quotes
+curl -s "https://hotelpms.talkar.in/api/hotels/hotel-berlin/availability?check_in=2026-11-25&check_out=2026-11-27&adults=2" | jq .
+
+# View hotel occupancy and front-desk KPI metrics
+curl -s https://hotelpms.talkar.in/api/hotels/hotel-berlin/stats | jq .
+```
+
+#### 2. Clean / Hard-Delete a Reservation
+Deletes the reservation record and its item line records from SQLite:
+```bash
+# Delete reservation by Reference Code or UUID
+curl -X DELETE https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings/BER-4029 | jq .
+```
+
+#### 3. Cancel a Reservation (Releases Inventory)
+Marks the reservation as `CANCELLED` and immediately releases room inventory back to availability:
+```bash
+curl -X POST https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings/BER-4029/cancel \
+  -H "Content-Type: application/json" \
+  -d '{"reason": "Guest called to cancel due to flight delay"}' | jq .
+```
+
+#### 4. Update Reservation Operational Status
+Update status to `CONFIRMED`, `CHECKED_IN`, `CHECKED_OUT`, or `NO_SHOW`:
+```bash
+curl -X POST https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings/BER-4029/status \
+  -H "Content-Type: application/json" \
+  -d '{"status": "CHECKED_IN"}' | jq .
+```
+
+#### 5. Add / Create a Reservation Manually
+```bash
+curl -X POST https://hotelpms.talkar.in/api/hotels/hotel-berlin/bookings \
+  -H "Content-Type: application/json" \
+  -d '{
+    "room_code": "BER-DBL",
+    "guest_first_name": "Hans",
+    "guest_last_name": "Mueller",
+    "guest_phone": "+491701234567",
+    "guest_email": "hans.mueller@example.de",
+    "check_in_date": "2026-11-26",
+    "check_out_date": "2026-11-28",
+    "adults_count": 2,
+    "with_breakfast": true,
+    "special_requests": "Quiet room on high floor"
+  }' | jq .
+```
+
+#### 6. Add / Update Room Type Inventory
+```bash
+curl -X POST https://hotelpms.talkar.in/api/hotels/hotel-berlin/rooms \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "BER-SUITE",
+    "name": "Penthouse Sky Suite with Sauna",
+    "description": "Top floor luxury suite with private sauna and city panoramic views",
+    "basePriceNight": 190,
+    "breakfastPriceNight": 20,
+    "totalInventory": 3,
+    "maxAdults": 2,
+    "maxChildren": 2,
+    "bedType": "1 King Bed"
+  }' | jq .
+```
+
+#### 7. Upsert Complete Hotel Property (Without SSH)
+Syncs hotel policies, amenities, and room inventory in a single call:
+```bash
+curl -X POST https://hotelpms.talkar.in/api/hotels/upsert \
+  -H "Content-Type: application/json" \
+  -d '{
+    "slug": "taj-goa",
+    "name": "Taj Holiday Village Resort & Spa",
+    "brand": "Taj Hotels",
+    "city": "Goa",
+    "country": "India",
+    "currency": "INR",
+    "checkInTime": "14:00",
+    "checkOutTime": "11:00",
+    "roomTypes": [
+      {
+        "code": "TAJ-VIL",
+        "name": "Cottage Garden View Villa",
+        "basePriceNight": 14500,
+        "breakfastPriceNight": 1500,
+        "totalInventory": 12
+      }
+    ]
+  }' | jq .
+```
+
+---
+
+### Part C: Direct Server / Terminal Access (Server Admins Only)
+
+If SSH access to the production host (`80.225.241.81`) is needed:
+
+```bash
+# Connect to production host
+ssh ubuntu@80.225.241.81
+
+# Sales CRM SQLite database location
+cd /var/www/sales
+sqlite3 prisma/dev.db "SELECT id, name, phone, stage, temperature FROM Lead;"
+
+# Hotel PMS SQLite database location
+cd /var/www/hotel-pms
+sqlite3 prisma/dev.db "SELECT bookingReference, guestFirstName, guestLastName, checkInDate, status FROM Booking;"
+```
+
