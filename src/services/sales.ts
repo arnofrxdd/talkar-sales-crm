@@ -432,17 +432,20 @@ export class SalesService {
       throw new Error(`Company "${companySlug}" not found for webhook`);
     }
 
-    const rawPhone = body.caller_number || body.called_number || extracted.lead_phone || body.phone;
+    // In outbound calls, called_number is the customer; in inbound calls, caller_number is the customer
+    const rawPhone =
+      body.call_type === 'outbound' || body.called_number
+        ? (body.called_number || extracted.lead_phone || body.phone || body.caller_number)
+        : (body.caller_number || extracted.lead_phone || body.phone || body.called_number);
     const cleanPhone = sanitizePhone(rawPhone);
     const leadName = extracted.lead_name || extracted.name || 'Voice Prospect';
 
     let temperature = 'WARM';
-    if (extracted.lead_temperature) {
-      temperature = String(extracted.lead_temperature).toUpperCase();
-    } else if (extracted.appointment_booked || extracted.booked) {
-      temperature = 'HOT';
-    } else if (extracted.not_interested) {
+    const quality = String(extracted.lead_quality || extracted.lead_temperature || '').toUpperCase();
+    if (quality === 'COLD' || quality === 'NOT_INTERESTED' || extracted.not_interested) {
       temperature = 'COLD';
+    } else if (extracted.appointment_booked || extracted.booked || quality === 'HOT') {
+      temperature = 'HOT';
     }
 
     let stage = 'QUALIFIED';
