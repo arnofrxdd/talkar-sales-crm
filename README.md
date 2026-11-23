@@ -53,14 +53,23 @@ Mirroring `talkar-hotel-pms`, the CRM backend contains **ZERO Meta tokens, WABA 
      │                                        - Live SSE Stream to Kanban
      │
      └──► 2. Sends Brochure / Confirmation ─► [Universal n8n Webhook]
-                                               - Holds Meta Bearer Auth
+                                               - Holds Meta Bearer Auth (A4TlqRpKEb5a6CGY)
                                                - Dispatches Approved Template
                                                - Graph API v23.0 
 ```
 
+### Production WhatsApp Dispatch Webhooks & Talkar Tool UUIDs
+Two universal production webhooks and Talkar tools are active and live:
+
+| Tool Name | Tool UUID | Target n8n Webhook URL | Meta Template |
+| :--- | :--- | :--- | :--- |
+| **`sales_send_collateral_whatsapp`** | `24c7b2cd-5038-431e-b24e-51bba04197ba` | `POST https://n8n.talkar.in/webhook/send-sales-collateral` | `sales_collateral_share` |
+| **`sales_send_appointment_confirmation_whatsapp`** | `fbc9dc58-9290-454b-a956-d8686689a03c` | `POST https://n8n.talkar.in/webhook/send-sales-appointment-confirmation` | `sales_appointment_confirmed` |
+
 1. **CRM Engine (`Port 7576`):** Manages companies, offerings catalog, leads, BANT scores, appointments, and pushes real-time updates via Server-Sent Events (`/api/events/leads`).
-2. **Universal n8n Webhooks:** Live on `https://n8n.talkar.in/webhook/...` with Meta credentials pre-configured.
-3. **Meta WhatsApp MCP:** Used solely to create, inspect, and approve WhatsApp message templates (`meta-whatsapp` tool).
+2. **Universal n8n Webhooks:** Live on `https://n8n.talkar.in/webhook/...` with Meta credentials pre-configured (`A4TlqRpKEb5a6CGY`).
+3. **Meta WhatsApp MCP:** Used to create, inspect, and approve WhatsApp message templates (`meta-whatsapp` tool).
+
 
 ---
 
