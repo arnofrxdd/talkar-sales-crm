@@ -132,3 +132,14 @@ companiesRouter.post('/', async (req: Request, res: Response) => {
     res.status(400).json({ success: false, error: err.message });
   }
 });
+
+// DELETE /api/companies/:slug - Delete company by slug
+companiesRouter.delete('/:slug', async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    await prisma.company.delete({ where: { slug } });
+    res.json({ success: true, message: `Company "${slug}" deleted successfully` });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});

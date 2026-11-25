@@ -3,15 +3,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seed for Talkar Universal Sales CRM (Prestige Group Only)...');
+  console.log('🌱 Starting database seed for Talkar Universal Sales CRM...');
 
-  // 1. Remove all non-Prestige demo companies (Clove Dental, GuruG, etc.)
-  const deleted = await prisma.company.deleteMany({
-    where: { slug: { not: 'prestige-group' } }
-  });
-  console.log(`🧹 Cleaned up ${deleted.count} non-Prestige companies.`);
-
-  // 2. REAL ESTATE: Prestige Group
+  // 1. REAL ESTATE: Prestige Group
   const prestige = await prisma.company.upsert({
     where: { slug: 'prestige-group' },
     update: {
